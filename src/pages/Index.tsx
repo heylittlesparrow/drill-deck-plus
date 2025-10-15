@@ -1,8 +1,11 @@
 import { BookOpen, Sparkles, Zap } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 import heroBanner from "@/assets/hero-banner.jpg";
 
 const Index = () => {
+  const navigate = useNavigate();
+  
   const activities = [
     {
       id: 1,
@@ -11,6 +14,7 @@ const Index = () => {
       icon: BookOpen,
       gradient: "bg-gradient-tile-1",
       delay: "0ms",
+      path: "/gpc",
     },
     {
       id: 2,
@@ -74,6 +78,7 @@ const Index = () => {
               key={activity.id}
               className="group relative overflow-hidden border-0 shadow-soft hover:shadow-medium transition-all duration-300 cursor-pointer animate-scale-in"
               style={{ animationDelay: activity.delay }}
+              onClick={() => activity.path && navigate(activity.path)}
             >
               <div
                 className={`${activity.gradient} p-8 md:p-10 rounded-[var(--radius)] h-full min-h-[280px] md:min-h-[320px] flex flex-col items-center justify-center text-center text-white transform transition-transform duration-300 group-hover:scale-[1.02]`}
