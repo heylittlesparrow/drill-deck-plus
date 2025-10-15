@@ -1,12 +1,16 @@
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 
 const GPCSetSelection = () => {
   const navigate = useNavigate();
+  const [practiceMode, setPracticeMode] = useState<"cumulative" | "single">("cumulative");
 
   const { data: sets, isLoading } = useQuery({
     queryKey: ["phonics-sets"],
@@ -42,6 +46,27 @@ const GPCSetSelection = () => {
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-8 md:py-12">
+        {/* Practice Mode Selection */}
+        <Card className="mb-8 p-6 md:p-8 border-0 shadow-soft">
+          <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4">
+            Practice Mode
+          </h2>
+          <RadioGroup value={practiceMode} onValueChange={(value) => setPracticeMode(value as "cumulative" | "single")}>
+            <div className="flex items-center space-x-3 mb-3">
+              <RadioGroupItem value="cumulative" id="cumulative" className="h-5 w-5" />
+              <Label htmlFor="cumulative" className="text-base md:text-lg cursor-pointer">
+                This and All Earlier Sets (Default)
+              </Label>
+            </div>
+            <div className="flex items-center space-x-3">
+              <RadioGroupItem value="single" id="single" className="h-5 w-5" />
+              <Label htmlFor="single" className="text-base md:text-lg cursor-pointer">
+                Just this Set
+              </Label>
+            </div>
+          </RadioGroup>
+        </Card>
+
         {isLoading ? (
           <div className="text-center text-lg text-muted-foreground">
             Loading sets...
@@ -51,7 +76,7 @@ const GPCSetSelection = () => {
             {sets?.filter((set) => set.set_number <= 10).map((set) => (
               <Card
                 key={set.id}
-                onClick={() => navigate(`/gpc/${set.set_number}`)}
+                onClick={() => navigate(`/gpc/${set.set_number}?mode=${practiceMode}`)}
                 className="group cursor-pointer border-0 shadow-soft hover:shadow-medium transition-all duration-300 animate-scale-in overflow-hidden"
                 style={{ animationDelay: `${(set.set_number - 1) * 50}ms` }}
               >

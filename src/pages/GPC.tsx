@@ -2,31 +2,50 @@ import { useState, useEffect } from "react";
 import { ArrowLeft, ChevronLeft, ChevronRight, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 const GPC = () => {
   const navigate = useNavigate();
   const { setNumber } = useParams();
+  const [searchParams] = useSearchParams();
+  const practiceMode = searchParams.get("mode") || "cumulative";
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const { data: setData, isLoading } = useQuery({
-    queryKey: ["phonics-set", setNumber],
+  const { data: setsData, isLoading } = useQuery({
+    queryKey: ["phonics-sets-for-practice", setNumber, practiceMode],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("phonics_sets")
-        .select("*")
-        .eq("set_number", parseInt(setNumber || "1"))
-        .single();
+      const selectedSet = parseInt(setNumber || "1");
       
-      if (error) throw error;
-      return data;
+      if (practiceMode === "single") {
+        // Load only the selected set
+        const { data, error } = await supabase
+          .from("phonics_sets")
+          .select("*")
+          .eq("set_number", selectedSet)
+          .single();
+        
+        if (error) throw error;
+        return [data];
+      } else {
+        // Load the selected set and all earlier sets
+        const { data, error } = await supabase
+          .from("phonics_sets")
+          .select("*")
+          .lte("set_number", selectedSet)
+          .order("set_number");
+        
+        if (error) throw error;
+        return data;
+      }
     },
     enabled: !!setNumber,
   });
 
-  const gpcs = setData?.gpc_list || [];
+  // Combine GPCs from all loaded sets
+  const gpcs = setsData?.flatMap(set => set.gpc_list) || [];
+  const currentSetName = setsData?.find(s => s.set_number === parseInt(setNumber || "1"))?.set_name || "";
 
   useEffect(() => {
     setCurrentIndex(0);
@@ -57,7 +76,7 @@ const GPC = () => {
     );
   }
 
-  if (!setData || gpcs.length === 0) {
+  if (!setsData || gpcs.length === 0) {
     return (
       <div className="min-h-screen bg-background">
         <header className="bg-gradient-header text-primary-foreground py-6 px-4 shadow-medium">
@@ -94,7 +113,7 @@ const GPC = () => {
             <ArrowLeft className="w-6 h-6" />
           </Button>
           <h1 className="text-2xl md:text-4xl font-bold">
-            {setData.set_name} - Grapheme-Phoneme Correspondences
+            {currentSetName} - Grapheme-Phoneme Correspondences
           </h1>
         </div>
       </header>
