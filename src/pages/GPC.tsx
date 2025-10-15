@@ -6,12 +6,23 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+// Fisher-Yates shuffle algorithm
+const shuffleArray = <T,>(array: T[]): T[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
 const GPC = () => {
   const navigate = useNavigate();
   const { setNumber } = useParams();
   const [searchParams] = useSearchParams();
   const practiceMode = searchParams.get("mode") || "cumulative";
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [shuffledGpcs, setShuffledGpcs] = useState<string[]>([]);
 
   const { data: setsData, isLoading } = useQuery({
     queryKey: ["phonics-sets-for-practice", setNumber, practiceMode],
@@ -48,20 +59,32 @@ const GPC = () => {
   const currentSetName = setsData?.find(s => s.set_number === parseInt(setNumber || "1"))?.set_name || "";
 
   useEffect(() => {
-    setCurrentIndex(0);
-  }, [setNumber]);
+    if (gpcs.length > 0) {
+      setShuffledGpcs(shuffleArray(gpcs));
+      setCurrentIndex(0);
+    }
+  }, [setNumber, practiceMode, gpcs.length]);
 
   const handlePrevious = () => {
-    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : gpcs.length - 1));
+    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : shuffledGpcs.length - 1));
   };
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev < gpcs.length - 1 ? prev + 1 : 0));
+    setCurrentIndex((prev) => (prev < shuffledGpcs.length - 1 ? prev + 1 : 0));
   };
 
-  const handleSoundOut = () => {
-    if (gpcs.length === 0) return;
-    const utterance = new SpeechSynthesisUtterance(gpcs[currentIndex].toLowerCase());
+  const handlePhoneme = () => {
+    if (shuffledGpcs.length === 0) return;
+    const utterance = new SpeechSynthesisUtterance(shuffledGpcs[currentIndex].toLowerCase());
+    utterance.rate = 0.5;
+    utterance.pitch = 1;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const handleGrapheme = () => {
+    if (shuffledGpcs.length === 0) return;
+    const utterance = new SpeechSynthesisUtterance(shuffledGpcs[currentIndex].toLowerCase());
     utterance.rate = 0.7;
     utterance.pitch = 1;
     window.speechSynthesis.cancel();
@@ -76,7 +99,7 @@ const GPC = () => {
     );
   }
 
-  if (!setsData || gpcs.length === 0) {
+  if (!setsData || shuffledGpcs.length === 0) {
     return (
       <div className="min-h-screen bg-background">
         <header className="bg-gradient-header text-primary-foreground py-6 px-4 shadow-medium">
@@ -125,19 +148,27 @@ const GPC = () => {
             {/* Grapheme Display */}
             <div className="bg-white/95 rounded-3xl p-12 md:p-20 mb-8 text-center shadow-soft">
               <p className="text-9xl md:text-[12rem] font-bold text-foreground tracking-wider">
-                {gpcs[currentIndex]}
+                {shuffledGpcs[currentIndex]}
               </p>
             </div>
 
-            {/* Sound It Out Button */}
-            <div className="flex justify-center mb-8">
+            {/* Phoneme and Grapheme Buttons */}
+            <div className="flex justify-center gap-4 mb-8">
               <Button
-                onClick={handleSoundOut}
+                onClick={handlePhoneme}
                 size="lg"
                 className="text-xl md:text-2xl h-16 md:h-20 px-8 md:px-12 bg-white text-foreground hover:bg-white/90 shadow-medium"
               >
                 <Volume2 className="w-8 h-8 md:w-10 md:h-10 mr-3" />
-                Sound It Out
+                Phoneme
+              </Button>
+              <Button
+                onClick={handleGrapheme}
+                size="lg"
+                className="text-xl md:text-2xl h-16 md:h-20 px-8 md:px-12 bg-white text-foreground hover:bg-white/90 shadow-medium"
+              >
+                <Volume2 className="w-8 h-8 md:w-10 md:h-10 mr-3" />
+                Grapheme
               </Button>
             </div>
 
@@ -153,7 +184,7 @@ const GPC = () => {
               </Button>
 
               <div className="text-white text-lg md:text-xl font-bold bg-white/20 px-6 py-3 rounded-full">
-                {currentIndex + 1} / {gpcs.length}
+                {currentIndex + 1} / {shuffledGpcs.length}
               </div>
 
               <Button
