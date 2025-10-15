@@ -38,11 +38,11 @@ const Index = () => {
           <div className="flex items-center justify-center gap-3 mb-4">
             <BookOpen className="w-10 h-10 md:w-12 md:h-12" />
             <h1 className="text-3xl md:text-5xl font-bold tracking-tight">
-              PLUS Home Practice
+              Drill Deck PLUS
             </h1>
           </div>
           <p className="text-center text-lg md:text-xl opacity-90">
-            Fun learning activities for growing readers!
+            Connect the Code. Build the Confidence.
           </p>
         </div>
       </header>
