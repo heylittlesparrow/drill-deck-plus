@@ -14,7 +14,7 @@ const Index = () => {
       icon: BookOpen,
       gradient: "bg-gradient-tile-1",
       delay: "0ms",
-      path: "/gpc",
+      path: "/gpc-sets",
     },
     {
       id: 2,

@@ -14,7 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      phonics_sets: {
+        Row: {
+          created_at: string
+          gpc_list: string[]
+          id: number
+          set_name: string
+          set_number: number
+        }
+        Insert: {
+          created_at?: string
+          gpc_list: string[]
+          id?: number
+          set_name: string
+          set_number: number
+        }
+        Update: {
+          created_at?: string
+          gpc_list?: string[]
+          id?: number
+          set_name?: string
+          set_number?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
