@@ -7,12 +7,17 @@ const corsHeaders = {
 
 const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1J4QZ_rBqC-Y5odVnVrolFY4jwrJCKFfULmUTBkPdZiI/export?format=csv&gid=0";
 
+// Cache configuration
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+let cachedData: PhonicsSet[] | null = null;
+let cacheTimestamp = 0;
+
 interface PhonicsSet {
   set_id: string;
   set_number: number;
   gpc_list: string[];
   hfw_list: string[];
-  phoneme_audio_base_url: string;
+  phoneme_audio_url: string;
 }
 
 function parseCSV(csvText: string): PhonicsSet[] {
@@ -30,7 +35,7 @@ function parseCSV(csvText: string): PhonicsSet[] {
     const setId = columns[0] || '';
     const gpcListRaw = columns[1] || '';
     const hfwListRaw = columns[2] || '';
-    const phonemeAudioBaseUrl = columns[3] || '';
+    const phonemeAudioUrl = columns[3] || '';
     
     // Extract set number from "Set 1", "Set 2", etc.
     const setNumberMatch = setId.match(/Set (\d+)/);
@@ -47,7 +52,7 @@ function parseCSV(csvText: string): PhonicsSet[] {
       set_number: setNumber,
       gpc_list: gpcList,
       hfw_list: hfwList,
-      phoneme_audio_base_url: phonemeAudioBaseUrl,
+      phoneme_audio_url: phonemeAudioUrl,
     });
   }
   
@@ -61,7 +66,20 @@ serve(async (req) => {
   }
 
   try {
-    console.log('Fetching phonics data from Google Sheets...');
+    // Check if we have valid cached data
+    const now = Date.now();
+    if (cachedData && (now - cacheTimestamp) < CACHE_TTL_MS) {
+      console.log('Returning cached data');
+      return new Response(
+        JSON.stringify({ data: cachedData, cached: true }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200,
+        }
+      );
+    }
+    
+    console.log('Cache miss or expired, fetching phonics data from Google Sheets...');
     
     // Fetch CSV from Google Sheets
     const response = await fetch(GOOGLE_SHEET_CSV_URL);
@@ -75,6 +93,11 @@ serve(async (req) => {
     // Parse CSV into structured data
     const phonicsSets = parseCSV(csvText);
     console.log(`Parsed ${phonicsSets.length} phonics sets`);
+    
+    // Update cache
+    cachedData = phonicsSets;
+    cacheTimestamp = now;
+    console.log('Cache updated');
     
     return new Response(
       JSON.stringify({ data: phonicsSets }),

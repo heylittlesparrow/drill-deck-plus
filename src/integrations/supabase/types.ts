@@ -14,33 +14,7 @@ export type Database = {
   }
   public: {
     Tables: {
-      phonics_sets: {
-        Row: {
-          created_at: string
-          gpc_list: string[]
-          id: number
-          phoneme_audio_urls: string[] | null
-          set_name: string
-          set_number: number
-        }
-        Insert: {
-          created_at?: string
-          gpc_list: string[]
-          id?: number
-          phoneme_audio_urls?: string[] | null
-          set_name: string
-          set_number: number
-        }
-        Update: {
-          created_at?: string
-          gpc_list?: string[]
-          id?: number
-          phoneme_audio_urls?: string[] | null
-          set_name?: string
-          set_number?: number
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Views: {
       [_ in never]: never
