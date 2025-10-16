@@ -23,6 +23,7 @@ const Index = () => {
       icon: Sparkles,
       gradient: "bg-gradient-tile-2",
       delay: "100ms",
+      path: "/hfw-sets",
     },
     {
       id: 3,
