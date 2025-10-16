@@ -62,30 +62,19 @@ const GPC = () => {
   };
 
   const handlePhoneme = () => {
-    if (shuffledGpcs.length === 0 || !setsData) return;
+    if (shuffledGpcs.length === 0) return;
     
-    const currentGpc = shuffledGpcs[currentIndex];
+    const currentGpc = shuffledGpcs[currentIndex].toLowerCase();
     
-    // Find which set contains this GPC and get its corresponding audio URL
-    let audioUrl = "";
-    for (const set of setsData) {
-      const gpcIndex = set.gpc_list.indexOf(currentGpc);
-      if (gpcIndex !== -1 && set.phoneme_audio_urls && set.phoneme_audio_urls[gpcIndex]) {
-        // Use the audio URL that corresponds to this GPC's index
-        audioUrl = set.phoneme_audio_urls[gpcIndex];
-        break;
-      }
-    }
+    // Use local audio files from public/phoneme-audio/
+    const audioUrl = `/phoneme-audio/${currentGpc}.mp3`;
     
-    if (audioUrl) {
-      // Play the pre-recorded audio file
-      const audio = new Audio(audioUrl);
-      audio.play().catch(error => {
-        console.error("Error playing phoneme audio:", error);
-      });
-    } else {
-      console.warn("No phoneme audio URL configured for this GPC yet");
-    }
+    // Play the pre-recorded audio file
+    const audio = new Audio(audioUrl);
+    audio.play().catch(error => {
+      console.error("Error playing phoneme audio:", error);
+      console.warn(`No audio file found at: ${audioUrl}`);
+    });
   };
 
   const handleGrapheme = () => {
