@@ -71,14 +71,19 @@ const GPC = () => {
       currentGpc = 'th-';
     }
     
-    // Use local audio files from public/phoneme-audio/
-    const audioUrl = `/phoneme-audio/${currentGpc}.mp3`;
+    // Try .mp3 first, then .m4a format
+    const mp3Url = `/phoneme-audio/${currentGpc}.mp3`;
+    const m4aUrl = `/phoneme-audio/${currentGpc}.m4a`;
     
     // Play the pre-recorded audio file
-    const audio = new Audio(audioUrl);
+    const audio = new Audio(mp3Url);
     audio.play().catch(error => {
-      console.error("Error playing phoneme audio:", error);
-      console.warn(`No audio file found at: ${audioUrl}`);
+      // If mp3 fails, try m4a format
+      const audioM4a = new Audio(m4aUrl);
+      audioM4a.play().catch(err => {
+        console.error("Error playing phoneme audio:", err);
+        console.warn(`No audio file found at: ${mp3Url} or ${m4aUrl}`);
+      });
     });
   };
 
