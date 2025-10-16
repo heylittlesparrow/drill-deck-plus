@@ -80,7 +80,7 @@ function parseFluencyCSV(csvText: string): FluencyPassage[] {
     if (!match) continue;
     
     const setId = match[1].trim();
-    const passage = match[2].trim().replace(/^"|"$/g, ''); // Remove surrounding quotes if present
+    const passageText = match[2].trim().replace(/^"|"$/g, ''); // Remove surrounding quotes if present
     
     // Extract set number from "Set 1", "Set 2", etc.
     const setNumberMatch = setId.match(/Set (\d+)/);
@@ -88,10 +88,40 @@ function parseFluencyCSV(csvText: string): FluencyPassage[] {
     
     const setNumber = parseInt(setNumberMatch[1], 10);
     
-    passages.push({
-      set_id: setId,
-      set_number: setNumber,
-      passage: passage,
+    // Split passages by comma, but preserve commas within quotes
+    const individualPassages: string[] = [];
+    let currentPassage = '';
+    let insideQuotes = false;
+    
+    for (let j = 0; j < passageText.length; j++) {
+      const char = passageText[j];
+      
+      if (char === '"') {
+        insideQuotes = !insideQuotes;
+        currentPassage += char;
+      } else if (char === ',' && !insideQuotes) {
+        // This comma is a separator between passages
+        if (currentPassage.trim()) {
+          individualPassages.push(currentPassage.trim());
+        }
+        currentPassage = '';
+      } else {
+        currentPassage += char;
+      }
+    }
+    
+    // Add the last passage
+    if (currentPassage.trim()) {
+      individualPassages.push(currentPassage.trim());
+    }
+    
+    // Create a FluencyPassage for each individual passage
+    individualPassages.forEach(passage => {
+      passages.push({
+        set_id: setId,
+        set_number: setNumber,
+        passage: passage,
+      });
     });
   }
   
