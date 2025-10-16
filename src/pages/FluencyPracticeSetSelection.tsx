@@ -19,31 +19,17 @@ const FluencyPracticeSetSelection = () => {
       try {
         const data = await fetchPhonicsData();
         
-        // Group passages by set number and count them
-        const setMap = new Map<number, { set_id: string; passage_count: number }>();
-        data.fluencyPassages.forEach(passage => {
-          const existing = setMap.get(passage.set_number);
-          if (existing) {
-            existing.passage_count++;
-          } else {
-            setMap.set(passage.set_number, {
-              set_id: passage.set_id,
-              passage_count: 1
-            });
-          }
-        });
-
-        // Convert to array
-        const setsArray = Array.from(setMap.entries()).map(([set_number, info]) => ({
-          set_number,
-          set_id: info.set_id,
-          passage_count: info.passage_count
+        // Map practice word sets
+        const setsArray = data.practiceWords.map(wordSet => ({
+          set_number: wordSet.set_number,
+          set_id: wordSet.set_id,
+          passage_count: wordSet.words.length
         })).sort((a, b) => a.set_number - b.set_number);
 
         setSets(setsArray);
       } catch (error) {
-        console.error('Error loading fluency data:', error);
-        toast.error('Failed to load fluency practice sets');
+        console.error('Error loading practice word data:', error);
+        toast.error('Failed to load practice word sets');
       } finally {
         setLoading(false);
       }
@@ -79,10 +65,10 @@ const FluencyPracticeSetSelection = () => {
           
           <div className="flex items-center justify-center gap-3 mb-3">
             <BookOpen className="w-8 h-8 md:w-10 md:h-10" />
-            <h1 className="text-2xl md:text-4xl font-bold">Fluency Practice</h1>
+            <h1 className="text-2xl md:text-4xl font-bold">Word Practice</h1>
           </div>
           <p className="text-center text-base md:text-lg opacity-90">
-            Select a set to practice reading fluency
+            Select a set to practice words
           </p>
         </div>
       </header>
@@ -126,7 +112,7 @@ const FluencyPracticeSetSelection = () => {
                   {set.set_id}
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  {set.passage_count} passage{set.passage_count !== 1 ? 's' : ''}
+                  {set.passage_count} word{set.passage_count !== 1 ? 's' : ''}
                 </div>
               </CardContent>
             </Card>

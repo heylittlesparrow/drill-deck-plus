@@ -6,11 +6,11 @@ const corsHeaders = {
 };
 
 const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTKupX7bWfCwPMKoPhJPfr-YuSGxRpkS73P9f_50Vq4FmlNBVJIJbgAvnP1kkCNzIJq024gpHbXLJa0/pub?gid=1477069288&single=true&output=csv";
-const FLUENCY_PRACTICE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTKupX7bWfCwPMKoPhJPfr-YuSGxRpkS73P9f_50Vq4FmlNBVJIJbgAvnP1kkCNzIJq024gpHbXLJa0/pub?gid=954382013&single=true&output=csv";
+const PRACTICE_WORDS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTKupX7bWfCwPMKoPhJPfr-YuSGxRpkS73P9f_50Vq4FmlNBVJIJbgAvnP1kkCNzIJq024gpHbXLJa0/pub?gid=954382013&single=true&output=csv";
 
 // Cache configuration
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
-let cachedData: { phonicsSets: PhonicsSet[], fluencyPassages: FluencyPassage[] } | null = null;
+let cachedData: { phonicsSets: PhonicsSet[], practiceWords: PracticeWords[] } | null = null;
 let cacheTimestamp = 0;
 
 interface PhonicsSet {
@@ -21,10 +21,10 @@ interface PhonicsSet {
   phoneme_audio_url: string;
 }
 
-interface FluencyPassage {
+interface PracticeWords {
   set_id: string;
   set_number: number;
-  passage: string;
+  words: string[];
 }
 
 function parseCSV(csvText: string): PhonicsSet[] {
@@ -66,9 +66,9 @@ function parseCSV(csvText: string): PhonicsSet[] {
   return sets.sort((a, b) => a.set_number - b.set_number);
 }
 
-function parseFluencyCSV(csvText: string): FluencyPassage[] {
+function parsePracticeWordsCSV(csvText: string): PracticeWords[] {
   const lines = csvText.trim().split('\n');
-  const passages: FluencyPassage[] = [];
+  const wordSets: PracticeWords[] = [];
   
   // Skip header row (index 0)
   for (let i = 1; i < lines.length; i++) {
@@ -80,7 +80,7 @@ function parseFluencyCSV(csvText: string): FluencyPassage[] {
     if (!match) continue;
     
     const setId = match[1].trim();
-    const passageText = match[2].trim().replace(/^"|"$/g, ''); // Remove surrounding quotes if present
+    const wordsText = match[2].trim();
     
     // Extract set number from "Set 1", "Set 2", etc.
     const setNumberMatch = setId.match(/Set (\d+)/);
@@ -88,44 +88,20 @@ function parseFluencyCSV(csvText: string): FluencyPassage[] {
     
     const setNumber = parseInt(setNumberMatch[1], 10);
     
-    // Split passages by comma, but preserve commas within quotes
-    const individualPassages: string[] = [];
-    let currentPassage = '';
-    let insideQuotes = false;
+    // Split words by comma and clean them up
+    const words = wordsText
+      .split(',')
+      .map(word => word.trim().replace(/^"|"$/g, ''))
+      .filter(word => word.length > 0);
     
-    for (let j = 0; j < passageText.length; j++) {
-      const char = passageText[j];
-      
-      if (char === '"') {
-        insideQuotes = !insideQuotes;
-        currentPassage += char;
-      } else if (char === ',' && !insideQuotes) {
-        // This comma is a separator between passages
-        if (currentPassage.trim()) {
-          individualPassages.push(currentPassage.trim());
-        }
-        currentPassage = '';
-      } else {
-        currentPassage += char;
-      }
-    }
-    
-    // Add the last passage
-    if (currentPassage.trim()) {
-      individualPassages.push(currentPassage.trim());
-    }
-    
-    // Create a FluencyPassage for each individual passage
-    individualPassages.forEach(passage => {
-      passages.push({
-        set_id: setId,
-        set_number: setNumber,
-        passage: passage,
-      });
+    wordSets.push({
+      set_id: setId,
+      set_number: setNumber,
+      words: words,
     });
   }
   
-  return passages.sort((a, b) => a.set_number - b.set_number);
+  return wordSets.sort((a, b) => a.set_number - b.set_number);
 }
 
 serve(async (req) => {
@@ -151,31 +127,31 @@ serve(async (req) => {
     console.log('Cache miss or expired, fetching phonics data from Google Sheets...');
     
     // Fetch both CSV files in parallel
-    const [phonicsResponse, fluencyResponse] = await Promise.all([
+    const [phonicsResponse, wordsResponse] = await Promise.all([
       fetch(GOOGLE_SHEET_CSV_URL),
-      fetch(FLUENCY_PRACTICE_CSV_URL)
+      fetch(PRACTICE_WORDS_CSV_URL)
     ]);
     
     if (!phonicsResponse.ok) {
       throw new Error(`Failed to fetch phonics sheet: ${phonicsResponse.statusText}`);
     }
-    if (!fluencyResponse.ok) {
-      throw new Error(`Failed to fetch fluency practice sheet: ${fluencyResponse.statusText}`);
+    if (!wordsResponse.ok) {
+      throw new Error(`Failed to fetch practice words sheet: ${wordsResponse.statusText}`);
     }
     
-    const [phonicsCSV, fluencyCSV] = await Promise.all([
+    const [phonicsCSV, wordsCSV] = await Promise.all([
       phonicsResponse.text(),
-      fluencyResponse.text()
+      wordsResponse.text()
     ]);
     console.log('Both CSVs fetched successfully, parsing...');
     
     // Parse both CSVs into structured data
     const phonicsSets = parseCSV(phonicsCSV);
-    const fluencyPassages = parseFluencyCSV(fluencyCSV);
-    console.log(`Parsed ${phonicsSets.length} phonics sets and ${fluencyPassages.length} fluency passages`);
+    const practiceWords = parsePracticeWordsCSV(wordsCSV);
+    console.log(`Parsed ${phonicsSets.length} phonics sets and ${practiceWords.length} practice word sets`);
     
     // Update cache
-    cachedData = { phonicsSets, fluencyPassages };
+    cachedData = { phonicsSets, practiceWords };
     cacheTimestamp = now;
     console.log('Cache updated');
     
