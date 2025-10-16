@@ -64,7 +64,12 @@ const GPC = () => {
   const handlePhoneme = () => {
     if (shuffledGpcs.length === 0) return;
     
-    const currentGpc = shuffledGpcs[currentIndex].toLowerCase();
+    let currentGpc = shuffledGpcs[currentIndex].toLowerCase();
+    
+    // Map special characters that can't be used in filenames
+    if (currentGpc === 'th*') {
+      currentGpc = 'th-';
+    }
     
     // Use local audio files from public/phoneme-audio/
     const audioUrl = `/phoneme-audio/${currentGpc}.mp3`;
