@@ -8,51 +8,51 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* PLUS Home Practice Color System - Inspired by coolors.co palette */
-    --background: 28 33% 94%;  /* Cream #F2E9E4 */
-    --foreground: 235 27% 18%;  /* Dark blue-purple #22223B */
+    /* PLUS Home Practice Color System - Calmer, muted palette */
+    --background: 210 20% 96%;  /* Soft pale blue-grey */
+    --foreground: 215 15% 30%;  /* Muted slate blue */
 
     --card: 0 0% 100%;
-    --card-foreground: 235 27% 18%;
+    --card-foreground: 215 15% 30%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 235 27% 18%;
+    --popover-foreground: 215 15% 30%;
 
-    --primary: 235 27% 18%;  /* Dark blue-purple #22223B */
-    --primary-foreground: 28 33% 94%;
+    --primary: 200 18% 46%;  /* Calm dusty blue */
+    --primary-foreground: 210 20% 98%;
 
-    --secondary: 234 19% 35%;  /* Blue-grey #4A4E69 */
-    --secondary-foreground: 28 33% 94%;
+    --secondary: 210 12% 55%;  /* Soft grey-blue */
+    --secondary-foreground: 210 20% 98%;
 
-    --muted: 340 14% 82%;  /* Light mauve #C9ADA7 */
-    --muted-foreground: 235 27% 18%;
+    --muted: 210 15% 88%;  /* Light cool grey */
+    --muted-foreground: 215 15% 30%;
 
-    --accent: 345 12% 59%;  /* Mauve #9A8C98 */
-    --accent-foreground: 28 33% 94%;
+    --accent: 195 20% 62%;  /* Gentle teal-grey */
+    --accent-foreground: 215 15% 30%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 28 33% 94%;
+    --destructive: 0 50% 58%;
+    --destructive-foreground: 210 20% 98%;
 
-    --border: 340 14% 82%;
-    --input: 340 14% 82%;
-    --ring: 235 27% 18%;
+    --border: 210 15% 85%;
+    --input: 210 15% 85%;
+    --ring: 200 18% 46%;
 
     --radius: 1.5rem;  /* Large rounded corners for child-friendly design */
     
     /* Custom activity tile colors */
-    --tile-gpcs: 264 89% 66%;  /* Vibrant purple */
-    --tile-hfw: 168 76% 42%;  /* Teal green */
-    --tile-fluency: 25 95% 53%;  /* Warm orange */
+    --tile-gpcs: 240 35% 58%;  /* Muted lavender */
+    --tile-hfw: 165 30% 48%;  /* Soft sage green */
+    --tile-fluency: 30 40% 55%;  /* Warm terracotta */
     
     /* Gradients */
-    --gradient-header: linear-gradient(135deg, hsl(235 27% 18%), hsl(234 19% 35%));
-    --gradient-tile-1: linear-gradient(135deg, hsl(264 89% 66%), hsl(264 89% 56%));
-    --gradient-tile-2: linear-gradient(135deg, hsl(168 76% 42%), hsl(168 76% 32%));
-    --gradient-tile-3: linear-gradient(135deg, hsl(25 95% 53%), hsl(25 95% 43%));
+    --gradient-header: linear-gradient(135deg, hsl(200 18% 46%), hsl(210 12% 55%));
+    --gradient-tile-1: linear-gradient(135deg, hsl(240 35% 58%), hsl(240 35% 48%));
+    --gradient-tile-2: linear-gradient(135deg, hsl(165 30% 48%), hsl(165 30% 38%));
+    --gradient-tile-3: linear-gradient(135deg, hsl(30 40% 55%), hsl(30 40% 45%));
     
     /* Shadows for depth */
-    --shadow-soft: 0 4px 16px rgba(34, 34, 59, 0.08);
-    --shadow-medium: 0 8px 24px rgba(34, 34, 59, 0.12);
+    --shadow-soft: 0 4px 16px rgba(77, 91, 110, 0.08);
+    --shadow-medium: 0 8px 24px rgba(77, 91, 110, 0.12);
     
     /* Transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
