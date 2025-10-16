@@ -74,12 +74,24 @@ const GPC = () => {
   };
 
   const handlePhoneme = () => {
-    if (shuffledGpcs.length === 0) return;
-    const utterance = new SpeechSynthesisUtterance(shuffledGpcs[currentIndex].toLowerCase());
-    utterance.rate = 0.5;
-    utterance.pitch = 1;
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utterance);
+    if (shuffledGpcs.length === 0 || !setsData) return;
+    
+    // Find the original index of the current GPC in the unshuffled list
+    const originalIndex = gpcs.indexOf(shuffledGpcs[currentIndex]);
+    
+    // Get the phoneme audio URL from the corresponding set
+    const phonemeUrls = setsData.flatMap(set => set.phoneme_audio_urls || []);
+    const audioUrl = phonemeUrls[originalIndex];
+    
+    if (audioUrl) {
+      // Play the pre-recorded audio file
+      const audio = new Audio(audioUrl);
+      audio.play().catch(error => {
+        console.error("Error playing phoneme audio:", error);
+      });
+    } else {
+      console.warn("No phoneme audio URL found for this GPC");
+    }
   };
 
   const handleGrapheme = () => {

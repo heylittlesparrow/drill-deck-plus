@@ -19,6 +19,7 @@ export type Database = {
           created_at: string
           gpc_list: string[]
           id: number
+          phoneme_audio_urls: string[] | null
           set_name: string
           set_number: number
         }
@@ -26,6 +27,7 @@ export type Database = {
           created_at?: string
           gpc_list: string[]
           id?: number
+          phoneme_audio_urls?: string[] | null
           set_name: string
           set_number: number
         }
@@ -33,6 +35,7 @@ export type Database = {
           created_at?: string
           gpc_list?: string[]
           id?: number
+          phoneme_audio_urls?: string[] | null
           set_name?: string
           set_number?: number
         }
