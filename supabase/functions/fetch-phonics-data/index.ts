@@ -18,7 +18,7 @@ interface PhonicsSet {
   set_number: number;
   gpc_list: string[];
   hfw_list: string[];
-  phoneme_audio_url: string;
+  phoneme_audio_urls: string[];
 }
 
 interface PracticeWords {
@@ -42,7 +42,7 @@ function parseCSV(csvText: string): PhonicsSet[] {
     const setId = columns[0] || '';
     const gpcListRaw = columns[1] || '';
     const hfwListRaw = columns[2] || '';
-    const phonemeAudioUrl = columns[3] || '';
+    const phonemeAudioUrlsRaw = columns[3] || '';
     
     // Extract set number from "Set 1", "Set 2", etc.
     const setNumberMatch = setId.match(/Set (\d+)/);
@@ -53,13 +53,14 @@ function parseCSV(csvText: string): PhonicsSet[] {
     // Parse semicolon-separated lists
     const gpcList = gpcListRaw.split(';').map(s => s.trim()).filter(s => s.length > 0);
     const hfwList = hfwListRaw.split(';').map(s => s.trim()).filter(s => s.length > 0);
+    const phonemeAudioUrls = phonemeAudioUrlsRaw.split(';').map(s => s.trim()).filter(s => s.length > 0);
     
     sets.push({
       set_id: setId,
       set_number: setNumber,
       gpc_list: gpcList,
       hfw_list: hfwList,
-      phoneme_audio_url: phonemeAudioUrl,
+      phoneme_audio_urls: phonemeAudioUrls,
     });
   }
   

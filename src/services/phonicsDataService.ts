@@ -5,7 +5,7 @@ export interface PhonicsSet {
   set_number: number;
   gpc_list: string[];
   hfw_list: string[];
-  phoneme_audio_url: string;
+  phoneme_audio_urls: string[];
 }
 
 export interface PracticeWords {

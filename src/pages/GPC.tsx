@@ -66,13 +66,13 @@ const GPC = () => {
     
     const currentGpc = shuffledGpcs[currentIndex];
     
-    // Find which set contains this GPC and get its complete audio URL
+    // Find which set contains this GPC and get its corresponding audio URL
     let audioUrl = "";
     for (const set of setsData) {
       const gpcIndex = set.gpc_list.indexOf(currentGpc);
-      if (gpcIndex !== -1 && set.phoneme_audio_url) {
-        // Use the complete URL from the Google Sheet
-        audioUrl = set.phoneme_audio_url;
+      if (gpcIndex !== -1 && set.phoneme_audio_urls && set.phoneme_audio_urls[gpcIndex]) {
+        // Use the audio URL that corresponds to this GPC's index
+        audioUrl = set.phoneme_audio_urls[gpcIndex];
         break;
       }
     }
@@ -84,7 +84,7 @@ const GPC = () => {
         console.error("Error playing phoneme audio:", error);
       });
     } else {
-      console.warn("No phoneme audio URL configured for this set yet");
+      console.warn("No phoneme audio URL configured for this GPC yet");
     }
   };
 
