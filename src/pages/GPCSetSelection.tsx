@@ -5,8 +5,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
+import { fetchPhonicsData } from "@/services/phonicsDataService";
 
 const GPCSetSelection = () => {
   const navigate = useNavigate();
@@ -14,15 +14,7 @@ const GPCSetSelection = () => {
 
   const { data: sets, isLoading } = useQuery({
     queryKey: ["phonics-sets"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("phonics_sets")
-        .select("*")
-        .order("set_number");
-      
-      if (error) throw error;
-      return data;
-    },
+    queryFn: fetchPhonicsData,
   });
 
   return (
@@ -75,14 +67,14 @@ const GPCSetSelection = () => {
           <div className="grid grid-cols-5 gap-4 md:gap-6">
             {sets?.filter((set) => set.set_number <= 10).map((set) => (
               <Card
-                key={set.id}
+                key={set.set_id}
                 onClick={() => navigate(`/gpc/${set.set_number}?mode=${practiceMode}`)}
                 className="group cursor-pointer border-0 shadow-soft hover:shadow-medium transition-all duration-300 animate-scale-in overflow-hidden"
                 style={{ animationDelay: `${(set.set_number - 1) * 50}ms` }}
               >
                 <div className="bg-gradient-tile-1 p-8 md:p-12 text-center h-full min-h-[140px] md:min-h-[180px] flex flex-col items-center justify-center transform transition-transform duration-300 group-hover:scale-[1.02]">
                   <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
-                    {set.set_name}
+                    {set.set_id}
                   </h2>
                   {set.gpc_list && set.gpc_list.length > 0 && (
                     <p className="text-sm md:text-base text-white/80">

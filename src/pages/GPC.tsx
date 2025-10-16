@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchPhonicsData, getCumulativeSets, getSetByNumber } from "@/services/phonicsDataService";
 
 // Fisher-Yates shuffle algorithm
 const shuffleArray = <T,>(array: T[]): T[] => {
@@ -28,27 +28,15 @@ const GPC = () => {
     queryKey: ["phonics-sets-for-practice", setNumber, practiceMode],
     queryFn: async () => {
       const selectedSet = parseInt(setNumber || "1");
+      const allSets = await fetchPhonicsData();
       
       if (practiceMode === "single") {
         // Load only the selected set
-        const { data, error } = await supabase
-          .from("phonics_sets")
-          .select("*")
-          .eq("set_number", selectedSet)
-          .single();
-        
-        if (error) throw error;
-        return [data];
+        const set = getSetByNumber(allSets, selectedSet);
+        return set ? [set] : [];
       } else {
         // Load the selected set and all earlier sets
-        const { data, error } = await supabase
-          .from("phonics_sets")
-          .select("*")
-          .lte("set_number", selectedSet)
-          .order("set_number");
-        
-        if (error) throw error;
-        return data;
+        return getCumulativeSets(allSets, selectedSet);
       }
     },
     enabled: !!setNumber,
@@ -56,7 +44,7 @@ const GPC = () => {
 
   // Combine GPCs from all loaded sets
   const gpcs = setsData?.flatMap(set => set.gpc_list) || [];
-  const currentSetName = setsData?.find(s => s.set_number === parseInt(setNumber || "1"))?.set_name || "";
+  const currentSetName = setsData?.find(s => s.set_number === parseInt(setNumber || "1"))?.set_id || "";
 
   useEffect(() => {
     if (gpcs.length > 0) {
@@ -76,12 +64,18 @@ const GPC = () => {
   const handlePhoneme = () => {
     if (shuffledGpcs.length === 0 || !setsData) return;
     
-    // Find the original index of the current GPC in the unshuffled list
-    const originalIndex = gpcs.indexOf(shuffledGpcs[currentIndex]);
+    const currentGpc = shuffledGpcs[currentIndex];
     
-    // Get the phoneme audio URL from the corresponding set
-    const phonemeUrls = setsData.flatMap(set => set.phoneme_audio_urls || []);
-    const audioUrl = phonemeUrls[originalIndex];
+    // Find which set contains this GPC and get its base URL
+    let audioUrl = "";
+    for (const set of setsData) {
+      const gpcIndex = set.gpc_list.indexOf(currentGpc);
+      if (gpcIndex !== -1 && set.phoneme_audio_base_url) {
+        // Build the audio URL: base_url + gpc + .mp3
+        audioUrl = `${set.phoneme_audio_base_url}${currentGpc}.mp3`;
+        break;
+      }
+    }
     
     if (audioUrl) {
       // Play the pre-recorded audio file
