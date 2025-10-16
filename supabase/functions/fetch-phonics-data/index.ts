@@ -43,9 +43,9 @@ function parseCSV(csvText: string): PhonicsSet[] {
     
     const setNumber = parseInt(setNumberMatch[1], 10);
     
-    // Parse comma-separated lists
-    const gpcList = gpcListRaw.split(',').map(s => s.trim()).filter(s => s.length > 0);
-    const hfwList = hfwListRaw.split(',').map(s => s.trim()).filter(s => s.length > 0);
+    // Parse semicolon-separated lists
+    const gpcList = gpcListRaw.split(';').map(s => s.trim()).filter(s => s.length > 0);
+    const hfwList = hfwListRaw.split(';').map(s => s.trim()).filter(s => s.length > 0);
     
     sets.push({
       set_id: setId,
