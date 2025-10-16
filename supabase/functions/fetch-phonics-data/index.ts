@@ -5,7 +5,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1J4QZ_rBqC-Y5odVnVrolFY4jwrJCKFfULmUTBkPdZiI/export?format=csv&gid=0";
+const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTKupX7bWfCwPMKoPhJPfr-YuSGxRpkS73P9f_50Vq4FmlNBVJIJbgAvnP1kkCNzIJq024gpHbXLJa0/pub?gid=1477069288&single=true&output=csv";
 
 // Cache configuration
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
