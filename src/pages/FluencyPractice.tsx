@@ -86,7 +86,7 @@ const FluencyPractice = () => {
             </h1>
           </div>
           <p className="text-center text-base md:text-lg opacity-90">
-            Word Practice
+            Word Reading
           </p>
         </div>
       </header>

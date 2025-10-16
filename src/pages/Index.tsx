@@ -27,7 +27,7 @@ const Index = () => {
     },
     {
       id: 3,
-      title: "Fluency Practice",
+      title: "Word Reading",
       description: "Build reading confidence",
       icon: Zap,
       gradient: "bg-gradient-tile-3",

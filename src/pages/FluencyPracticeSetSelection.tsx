@@ -65,7 +65,7 @@ const FluencyPracticeSetSelection = () => {
           
           <div className="flex items-center justify-center gap-3 mb-3">
             <BookOpen className="w-8 h-8 md:w-10 md:h-10" />
-            <h1 className="text-2xl md:text-4xl font-bold">Word Practice</h1>
+            <h1 className="text-2xl md:text-4xl font-bold">Word Reading</h1>
           </div>
           <p className="text-center text-base md:text-lg opacity-90">
             Select a set to practice words
