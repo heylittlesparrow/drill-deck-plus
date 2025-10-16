@@ -76,12 +76,12 @@ function parsePracticeWordsCSV(csvText: string): PracticeWords[] {
     const line = lines[i];
     if (!line.trim()) continue;
     
-    // Split by comma, but handle commas within quoted text
-    const match = line.match(/^([^,]+),(.+)$/);
-    if (!match) continue;
+    // Split the entire line by commas to get all columns
+    const columns = line.split(',').map(col => col.trim().replace(/^"|"$/g, ''));
     
-    const setId = match[1].trim();
-    const wordsText = match[2].trim();
+    if (columns.length === 0) continue;
+    
+    const setId = columns[0];
     
     // Extract set number from "Set 1", "Set 2", etc.
     const setNumberMatch = setId.match(/Set (\d+)/);
@@ -89,10 +89,9 @@ function parsePracticeWordsCSV(csvText: string): PracticeWords[] {
     
     const setNumber = parseInt(setNumberMatch[1], 10);
     
-    // Split words by comma and clean them up
-    const words = wordsText
-      .split(',')
-      .map(word => word.trim().replace(/^"|"$/g, ''))
+    // All remaining columns (from index 1 onwards) are individual words
+    const words = columns
+      .slice(1)
       .filter(word => word.length > 0);
     
     wordSets.push({
