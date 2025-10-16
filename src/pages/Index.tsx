@@ -32,6 +32,7 @@ const Index = () => {
       icon: Zap,
       gradient: "bg-gradient-tile-3",
       delay: "200ms",
+      path: "/fluency-sets",
     },
   ];
 

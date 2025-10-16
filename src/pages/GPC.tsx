@@ -28,15 +28,15 @@ const GPC = () => {
     queryKey: ["phonics-sets-for-practice", setNumber, practiceMode],
     queryFn: async () => {
       const selectedSet = parseInt(setNumber || "1");
-      const allSets = await fetchPhonicsData();
+      const data = await fetchPhonicsData();
       
       if (practiceMode === "single") {
         // Load only the selected set
-        const set = getSetByNumber(allSets, selectedSet);
+        const set = getSetByNumber(data.phonicsSets, selectedSet);
         return set ? [set] : [];
       } else {
         // Load the selected set and all earlier sets
-        return getCumulativeSets(allSets, selectedSet);
+        return getCumulativeSets(data.phonicsSets, selectedSet);
       }
     },
     enabled: !!setNumber,

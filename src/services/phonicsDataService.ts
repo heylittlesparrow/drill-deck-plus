@@ -8,10 +8,21 @@ export interface PhonicsSet {
   phoneme_audio_url: string;
 }
 
+export interface FluencyPassage {
+  set_id: string;
+  set_number: number;
+  passage: string;
+}
+
+export interface PhonicsData {
+  phonicsSets: PhonicsSet[];
+  fluencyPassages: FluencyPassage[];
+}
+
 /**
  * Fetches phonics data from Google Sheets via edge function
  */
-export const fetchPhonicsData = async (): Promise<PhonicsSet[]> => {
+export const fetchPhonicsData = async (): Promise<PhonicsData> => {
   const { data, error } = await supabase.functions.invoke('fetch-phonics-data');
   
   if (error) {
@@ -19,7 +30,7 @@ export const fetchPhonicsData = async (): Promise<PhonicsSet[]> => {
     throw new Error('Failed to fetch phonics data');
   }
   
-  return data.data || [];
+  return data.data || { phonicsSets: [], fluencyPassages: [] };
 };
 
 /**
@@ -35,5 +46,21 @@ export const getSetByNumber = (sets: PhonicsSet[], setNumber: number): PhonicsSe
 export const getCumulativeSets = (sets: PhonicsSet[], setNumber: number): PhonicsSet[] => {
   return sets
     .filter(set => set.set_number <= setNumber)
+    .sort((a, b) => a.set_number - b.set_number);
+};
+
+/**
+ * Gets fluency passages for a specific set
+ */
+export const getPassagesBySetNumber = (passages: FluencyPassage[], setNumber: number): FluencyPassage[] => {
+  return passages.filter(passage => passage.set_number === setNumber);
+};
+
+/**
+ * Gets all fluency passages up to and including the specified set number (for cumulative mode)
+ */
+export const getCumulativePassages = (passages: FluencyPassage[], setNumber: number): FluencyPassage[] => {
+  return passages
+    .filter(passage => passage.set_number <= setNumber)
     .sort((a, b) => a.set_number - b.set_number);
 };

@@ -12,10 +12,12 @@ const GPCSetSelection = () => {
   const navigate = useNavigate();
   const [practiceMode, setPracticeMode] = useState<"cumulative" | "single">("cumulative");
 
-  const { data: sets, isLoading } = useQuery({
+  const { data: phonicsData, isLoading } = useQuery({
     queryKey: ["phonics-sets"],
     queryFn: fetchPhonicsData,
   });
+
+  const sets = phonicsData?.phonicsSets || [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -65,7 +67,7 @@ const GPCSetSelection = () => {
           </div>
         ) : (
           <div className="grid grid-cols-5 gap-4 md:gap-6">
-            {sets?.filter((set) => set.set_number <= 10).map((set) => (
+            {sets.filter((set) => set.set_number <= 10).map((set) => (
               <Card
                 key={set.set_id}
                 onClick={() => navigate(`/gpc/${set.set_number}?mode=${practiceMode}`)}

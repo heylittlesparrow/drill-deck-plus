@@ -6,10 +6,11 @@ const corsHeaders = {
 };
 
 const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTKupX7bWfCwPMKoPhJPfr-YuSGxRpkS73P9f_50Vq4FmlNBVJIJbgAvnP1kkCNzIJq024gpHbXLJa0/pub?gid=1477069288&single=true&output=csv";
+const FLUENCY_PRACTICE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTKupX7bWfCwPMKoPhJPfr-YuSGxRpkS73P9f_50Vq4FmlNBVJIJbgAvnP1kkCNzIJq024gpHbXLJa0/pub?gid=954382013&single=true&output=csv";
 
 // Cache configuration
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
-let cachedData: PhonicsSet[] | null = null;
+let cachedData: { phonicsSets: PhonicsSet[], fluencyPassages: FluencyPassage[] } | null = null;
 let cacheTimestamp = 0;
 
 interface PhonicsSet {
@@ -18,6 +19,12 @@ interface PhonicsSet {
   gpc_list: string[];
   hfw_list: string[];
   phoneme_audio_url: string;
+}
+
+interface FluencyPassage {
+  set_id: string;
+  set_number: number;
+  passage: string;
 }
 
 function parseCSV(csvText: string): PhonicsSet[] {
@@ -59,6 +66,38 @@ function parseCSV(csvText: string): PhonicsSet[] {
   return sets.sort((a, b) => a.set_number - b.set_number);
 }
 
+function parseFluencyCSV(csvText: string): FluencyPassage[] {
+  const lines = csvText.trim().split('\n');
+  const passages: FluencyPassage[] = [];
+  
+  // Skip header row (index 0)
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i];
+    if (!line.trim()) continue;
+    
+    // Split by comma, but handle commas within quoted text
+    const match = line.match(/^([^,]+),(.+)$/);
+    if (!match) continue;
+    
+    const setId = match[1].trim();
+    const passage = match[2].trim().replace(/^"|"$/g, ''); // Remove surrounding quotes if present
+    
+    // Extract set number from "Set 1", "Set 2", etc.
+    const setNumberMatch = setId.match(/Set (\d+)/);
+    if (!setNumberMatch) continue;
+    
+    const setNumber = parseInt(setNumberMatch[1], 10);
+    
+    passages.push({
+      set_id: setId,
+      set_number: setNumber,
+      passage: passage,
+    });
+  }
+  
+  return passages.sort((a, b) => a.set_number - b.set_number);
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -81,26 +120,37 @@ serve(async (req) => {
     
     console.log('Cache miss or expired, fetching phonics data from Google Sheets...');
     
-    // Fetch CSV from Google Sheets
-    const response = await fetch(GOOGLE_SHEET_CSV_URL);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch Google Sheet: ${response.statusText}`);
+    // Fetch both CSV files in parallel
+    const [phonicsResponse, fluencyResponse] = await Promise.all([
+      fetch(GOOGLE_SHEET_CSV_URL),
+      fetch(FLUENCY_PRACTICE_CSV_URL)
+    ]);
+    
+    if (!phonicsResponse.ok) {
+      throw new Error(`Failed to fetch phonics sheet: ${phonicsResponse.statusText}`);
+    }
+    if (!fluencyResponse.ok) {
+      throw new Error(`Failed to fetch fluency practice sheet: ${fluencyResponse.statusText}`);
     }
     
-    const csvText = await response.text();
-    console.log('CSV fetched successfully, parsing...');
+    const [phonicsCSV, fluencyCSV] = await Promise.all([
+      phonicsResponse.text(),
+      fluencyResponse.text()
+    ]);
+    console.log('Both CSVs fetched successfully, parsing...');
     
-    // Parse CSV into structured data
-    const phonicsSets = parseCSV(csvText);
-    console.log(`Parsed ${phonicsSets.length} phonics sets`);
+    // Parse both CSVs into structured data
+    const phonicsSets = parseCSV(phonicsCSV);
+    const fluencyPassages = parseFluencyCSV(fluencyCSV);
+    console.log(`Parsed ${phonicsSets.length} phonics sets and ${fluencyPassages.length} fluency passages`);
     
     // Update cache
-    cachedData = phonicsSets;
+    cachedData = { phonicsSets, fluencyPassages };
     cacheTimestamp = now;
     console.log('Cache updated');
     
     return new Response(
-      JSON.stringify({ data: phonicsSets }),
+      JSON.stringify({ data: cachedData }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,

@@ -22,7 +22,7 @@ const HFW = () => {
   const [searchParams] = useSearchParams();
   const practiceMode = searchParams.get("mode") === "single" ? "single" : "cumulative";
 
-  const { data: allSets, isLoading } = useQuery({
+  const { data: phonicsData, isLoading } = useQuery({
     queryKey: ["phonics-sets"],
     queryFn: fetchPhonicsData,
   });
@@ -30,10 +30,10 @@ const HFW = () => {
   const setNum = parseInt(setNumber || "1", 10);
   
   // Get the appropriate sets based on practice mode
-  const setsData = allSets
+  const setsData = phonicsData
     ? practiceMode === "single" 
-      ? [getSetByNumber(allSets, setNum)].filter(Boolean)
-      : getCumulativeSets(allSets, setNum)
+      ? [getSetByNumber(phonicsData.phonicsSets, setNum)].filter(Boolean)
+      : getCumulativeSets(phonicsData.phonicsSets, setNum)
     : [];
 
   // Collect all HFWs from the selected set(s)
@@ -49,7 +49,7 @@ const HFW = () => {
       setShuffledHfws(shuffleArray(hfws));
       setCurrentIndex(0);
     }
-  }, [practiceMode, setNumber, allSets?.length]);
+  }, [practiceMode, setNumber, phonicsData]);
 
   const handlePrevious = () => {
     setCurrentIndex((prev) => (prev === 0 ? shuffledHfws.length - 1 : prev - 1));

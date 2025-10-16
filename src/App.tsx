@@ -8,6 +8,8 @@ import GPC from "./pages/GPC";
 import GPCSetSelection from "./pages/GPCSetSelection";
 import HFW from "./pages/HFW";
 import HFWSetSelection from "./pages/HFWSetSelection";
+import FluencyPractice from "./pages/FluencyPractice";
+import FluencyPracticeSetSelection from "./pages/FluencyPracticeSetSelection";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +26,8 @@ const App = () => (
           <Route path="/gpc/:setNumber" element={<GPC />} />
           <Route path="/hfw-sets" element={<HFWSetSelection />} />
           <Route path="/hfw/:setNumber" element={<HFW />} />
+          <Route path="/fluency-sets" element={<FluencyPracticeSetSelection />} />
+          <Route path="/fluency/:setNumber" element={<FluencyPractice />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
