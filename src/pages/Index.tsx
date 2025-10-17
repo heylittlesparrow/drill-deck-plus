@@ -104,13 +104,6 @@ const Index = () => {
             </Card>
           ))}
         </div>
-
-        {/* Footer Message */}
-        <div className="mt-12 text-center">
-          <p className="text-muted-foreground text-sm md:text-base">
-            🌟 Great job choosing to practice today! 🌟
-          </p>
-        </div>
       </main>
     </div>
   );
