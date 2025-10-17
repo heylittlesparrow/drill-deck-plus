@@ -89,11 +89,28 @@ const GPC = () => {
 
   const handleGrapheme = () => {
     if (shuffledGpcs.length === 0) return;
-    const utterance = new SpeechSynthesisUtterance(shuffledGpcs[currentIndex].toLowerCase());
-    utterance.rate = 0.7;
-    utterance.pitch = 1;
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utterance);
+    
+    let currentGpc = shuffledGpcs[currentIndex].toLowerCase();
+    
+    // Map special characters that can't be used in filenames
+    if (currentGpc === 'th*') {
+      currentGpc = 'th-';
+    }
+    
+    // Try .mp3 first, then .m4a format
+    const mp3Url = `/grapheme-audio/${currentGpc}.mp3`;
+    const m4aUrl = `/grapheme-audio/${currentGpc}.m4a`;
+    
+    // Play the pre-recorded audio file
+    const audio = new Audio(mp3Url);
+    audio.play().catch(error => {
+      // If mp3 fails, try m4a format
+      const audioM4a = new Audio(m4aUrl);
+      audioM4a.play().catch(err => {
+        console.error("Error playing grapheme audio:", err);
+        console.warn(`No audio file found at: ${mp3Url} or ${m4aUrl}`);
+      });
+    });
   };
 
   if (isLoading) {
