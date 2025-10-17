@@ -18,21 +18,21 @@ const Index = () => {
     },
     {
       id: 2,
-      title: "High Frequency Words",
-      description: "Practice common words",
-      icon: Sparkles,
-      gradient: "bg-gradient-tile-2",
+      title: "Decodable Words",
+      description: "Blend learned sound to read words",
+      icon: Zap,
+      gradient: "bg-gradient-tile-3",
       delay: "100ms",
-      path: "/hfw-sets",
+      path: "/fluency-sets",
     },
     {
       id: 3,
-      title: "Word Reading",
-      description: "Build reading confidence",
-      icon: Zap,
-      gradient: "bg-gradient-tile-3",
+      title: "High Frequency Words",
+      description: "Practise irregular words",
+      icon: Sparkles,
+      gradient: "bg-gradient-tile-2",
       delay: "200ms",
-      path: "/fluency-sets",
+      path: "/hfw-sets",
     },
   ];
 
@@ -69,7 +69,7 @@ const Index = () => {
             Choose Your Activity
           </h2>
           <p className="text-muted-foreground text-base md:text-lg">
-            Select a tile below to start practicing!
+            Select a tile below to begin!
           </p>
         </div>
 
