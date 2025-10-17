@@ -23,6 +23,7 @@ const GPC = () => {
   const practiceMode = searchParams.get("mode") || "cumulative";
   const [currentIndex, setCurrentIndex] = useState(0);
   const [shuffledGpcs, setShuffledGpcs] = useState<string[]>([]);
+  const [audioCache, setAudioCache] = useState<Map<string, HTMLAudioElement>>(new Map());
 
   const { data: setsData, isLoading } = useQuery({
     queryKey: ["phonics-sets-for-practice", setNumber, practiceMode],
@@ -53,6 +54,36 @@ const GPC = () => {
     }
   }, [setNumber, practiceMode, gpcs.length]);
 
+  // Preload all audio files for the current set
+  useEffect(() => {
+    if (shuffledGpcs.length === 0) return;
+
+    const cache = new Map<string, HTMLAudioElement>();
+    
+    shuffledGpcs.forEach((gpc) => {
+      let normalizedGpc = gpc.toLowerCase();
+      if (normalizedGpc === 'th*') normalizedGpc = 'th-';
+      
+      // Preload phoneme audio
+      const phonemeMp3 = new Audio(`/phoneme-audio/${normalizedGpc}.mp3`);
+      const phonemeM4a = new Audio(`/phoneme-audio/${normalizedGpc}.m4a`);
+      phonemeMp3.preload = 'auto';
+      phonemeM4a.preload = 'auto';
+      cache.set(`phoneme-${normalizedGpc}`, phonemeMp3);
+      cache.set(`phoneme-${normalizedGpc}-m4a`, phonemeM4a);
+      
+      // Preload grapheme audio
+      const graphemeMp3 = new Audio(`/grapheme-audio/${normalizedGpc}.mp3`);
+      const graphemeM4a = new Audio(`/grapheme-audio/${normalizedGpc}.m4a`);
+      graphemeMp3.preload = 'auto';
+      graphemeM4a.preload = 'auto';
+      cache.set(`grapheme-${normalizedGpc}`, graphemeMp3);
+      cache.set(`grapheme-${normalizedGpc}-m4a`, graphemeM4a);
+    });
+    
+    setAudioCache(cache);
+  }, [shuffledGpcs]);
+
   const handlePrevious = () => {
     setCurrentIndex((prev) => (prev > 0 ? prev - 1 : shuffledGpcs.length - 1));
   };
@@ -65,52 +96,42 @@ const GPC = () => {
     if (shuffledGpcs.length === 0) return;
     
     let currentGpc = shuffledGpcs[currentIndex].toLowerCase();
+    if (currentGpc === 'th*') currentGpc = 'th-';
     
-    // Map special characters that can't be used in filenames
-    if (currentGpc === 'th*') {
-      currentGpc = 'th-';
-    }
-    
-    // Try .mp3 first, then .m4a format
-    const mp3Url = `/phoneme-audio/${currentGpc}.mp3`;
-    const m4aUrl = `/phoneme-audio/${currentGpc}.m4a`;
-    
-    // Play the pre-recorded audio file
-    const audio = new Audio(mp3Url);
-    audio.play().catch(error => {
-      // If mp3 fails, try m4a format
-      const audioM4a = new Audio(m4aUrl);
-      audioM4a.play().catch(err => {
-        console.error("Error playing phoneme audio:", err);
-        console.warn(`No audio file found at: ${mp3Url} or ${m4aUrl}`);
+    // Use preloaded audio from cache
+    const audio = audioCache.get(`phoneme-${currentGpc}`);
+    if (audio) {
+      audio.currentTime = 0; // Reset to start
+      audio.play().catch(() => {
+        // If mp3 fails, try m4a format
+        const audioM4a = audioCache.get(`phoneme-${currentGpc}-m4a`);
+        if (audioM4a) {
+          audioM4a.currentTime = 0;
+          audioM4a.play().catch(err => console.error("Error playing phoneme audio:", err));
+        }
       });
-    });
+    }
   };
 
   const handleGrapheme = () => {
     if (shuffledGpcs.length === 0) return;
     
     let currentGpc = shuffledGpcs[currentIndex].toLowerCase();
+    if (currentGpc === 'th*') currentGpc = 'th-';
     
-    // Map special characters that can't be used in filenames
-    if (currentGpc === 'th*') {
-      currentGpc = 'th-';
-    }
-    
-    // Try .mp3 first, then .m4a format
-    const mp3Url = `/grapheme-audio/${currentGpc}.mp3`;
-    const m4aUrl = `/grapheme-audio/${currentGpc}.m4a`;
-    
-    // Play the pre-recorded audio file
-    const audio = new Audio(mp3Url);
-    audio.play().catch(error => {
-      // If mp3 fails, try m4a format
-      const audioM4a = new Audio(m4aUrl);
-      audioM4a.play().catch(err => {
-        console.error("Error playing grapheme audio:", err);
-        console.warn(`No audio file found at: ${mp3Url} or ${m4aUrl}`);
+    // Use preloaded audio from cache
+    const audio = audioCache.get(`grapheme-${currentGpc}`);
+    if (audio) {
+      audio.currentTime = 0; // Reset to start
+      audio.play().catch(() => {
+        // If mp3 fails, try m4a format
+        const audioM4a = audioCache.get(`grapheme-${currentGpc}-m4a`);
+        if (audioM4a) {
+          audioM4a.currentTime = 0;
+          audioM4a.play().catch(err => console.error("Error playing grapheme audio:", err));
+        }
       });
-    });
+    }
   };
 
   if (isLoading) {
