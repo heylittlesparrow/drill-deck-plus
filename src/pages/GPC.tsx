@@ -202,16 +202,14 @@ const GPC = () => {
                 size="lg"
                 className="text-xl md:text-2xl h-16 md:h-20 px-8 md:px-12 bg-white text-foreground hover:bg-white/90 shadow-medium"
               >
-                <Volume2 className="w-8 h-8 md:w-10 md:h-10 mr-3" />
-                Phoneme
+                📞Phoneme👂
               </Button>
               <Button
                 onClick={handleGrapheme}
                 size="lg"
                 className="text-xl md:text-2xl h-16 md:h-20 px-8 md:px-12 bg-white text-foreground hover:bg-white/90 shadow-medium"
               >
-                <Volume2 className="w-8 h-8 md:w-10 md:h-10 mr-3" />
-                Grapheme
+                📊Grapheme✍️
               </Button>
             </div>
 
