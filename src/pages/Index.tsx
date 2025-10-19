@@ -38,28 +38,33 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header Section */}
-      <header className="bg-gradient-header text-primary-foreground py-8 px-4 md:px-8 shadow-medium">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <BookOpen className="w-10 h-10 md:w-12 md:h-12" />
-            <h1 className="text-3xl md:text-5xl font-bold tracking-tight">
-              Drill Deck PLUS
-            </h1>
-          </div>
-          <p className="text-center text-lg md:text-xl opacity-90">
-            Connect the Code. Build the Confidence.
-          </p>
+      {/* Integrated Header and Hero Section */}
+      <div className="relative overflow-hidden">
+        {/* Hero Image as Background */}
+        <div className="absolute inset-0 w-full h-full">
+          <img
+            src={heroBanner}
+            alt="Educational learning banner with books and stars"
+            className="w-full h-full object-cover"
+          />
+          {/* Gradient overlay to blend header with image */}
+          <div className="absolute inset-0 bg-gradient-to-b from-primary/90 via-primary/70 to-transparent" />
         </div>
-      </header>
 
-      {/* Hero Banner */}
-      <div className="w-full h-32 md:h-48 overflow-hidden">
-        <img
-          src={heroBanner}
-          alt="Educational learning banner with books and stars"
-          className="w-full h-full object-cover"
-        />
+        {/* Header Content */}
+        <header className="relative z-10 text-primary-foreground py-12 px-4 md:px-8">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <BookOpen className="w-10 h-10 md:w-12 md:h-12 drop-shadow-lg" />
+              <h1 className="text-3xl md:text-5xl font-bold tracking-tight drop-shadow-lg">
+                Drill Deck PLUS
+              </h1>
+            </div>
+            <p className="text-center text-lg md:text-xl drop-shadow-md mb-8">
+              Connect the Code. Build the Confidence.
+            </p>
+          </div>
+        </header>
       </div>
 
       {/* Main Dashboard */}
