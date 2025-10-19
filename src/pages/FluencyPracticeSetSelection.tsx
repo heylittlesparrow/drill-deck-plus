@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { BookOpen, ArrowLeft, Loader2 } from "lucide-react";
+import { BookOpen, ArrowLeft, Loader2, Home } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -53,23 +53,33 @@ const FluencyPracticeSetSelection = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="bg-gradient-header text-primary-foreground py-6 px-4 md:px-8 shadow-medium">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
+          <div className="flex-1">
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/")}
+              className="mb-4 text-primary-foreground hover:bg-white/10"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Home
+            </Button>
+            
+            <div className="flex items-center justify-center gap-3 mb-3">
+              <BookOpen className="w-8 h-8 md:w-10 md:h-10" />
+              <h1 className="text-2xl md:text-4xl font-bold">Word Reading</h1>
+            </div>
+            <p className="text-center text-base md:text-lg opacity-90">
+              Select a set to practice words
+            </p>
+          </div>
           <Button
             variant="ghost"
+            size="icon"
             onClick={() => navigate("/")}
-            className="mb-4 text-primary-foreground hover:bg-white/10"
+            className="text-primary-foreground hover:bg-white/10"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Home
+            <Home className="w-6 h-6" />
           </Button>
-          
-          <div className="flex items-center justify-center gap-3 mb-3">
-            <BookOpen className="w-8 h-8 md:w-10 md:h-10" />
-            <h1 className="text-2xl md:text-4xl font-bold">Word Reading</h1>
-          </div>
-          <p className="text-center text-base md:text-lg opacity-90">
-            Select a set to practice words
-          </p>
         </div>
       </header>
 

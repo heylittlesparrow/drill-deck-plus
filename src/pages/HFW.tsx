@@ -1,4 +1,4 @@
-import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
@@ -91,23 +91,33 @@ const HFW = () => {
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="bg-gradient-header text-primary-foreground py-6 px-4 shadow-medium">
-        <div className="max-w-4xl mx-auto flex items-center gap-4">
+        <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate("/hfw-sets")}
+              className="text-primary-foreground hover:bg-white/20"
+            >
+              <ArrowLeft className="w-6 h-6" />
+            </Button>
+            <div>
+              <h1 className="text-2xl md:text-4xl font-bold">
+                High Frequency Words
+              </h1>
+              <p className="text-sm md:text-base opacity-90">
+                {currentSetName} • {practiceMode === "cumulative" ? "Cumulative" : "Single Set"}
+              </p>
+            </div>
+          </div>
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate("/hfw-sets")}
+            onClick={() => navigate("/")}
             className="text-primary-foreground hover:bg-white/20"
           >
-            <ArrowLeft className="w-6 h-6" />
+            <Home className="w-6 h-6" />
           </Button>
-          <div>
-            <h1 className="text-2xl md:text-4xl font-bold">
-              High Frequency Words
-            </h1>
-            <p className="text-sm md:text-base opacity-90">
-              {currentSetName} • {practiceMode === "cumulative" ? "Cumulative" : "Single Set"}
-            </p>
-          </div>
         </div>
       </header>
 

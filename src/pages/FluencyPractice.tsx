@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { BookOpen, ArrowLeft, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { BookOpen, ArrowLeft, ChevronLeft, ChevronRight, Loader2, Home } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { fetchPhonicsData, getWordsBySetNumber, getCumulativeWords } from "@/services/phonicsDataService";
@@ -69,25 +69,35 @@ const FluencyPractice = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="bg-gradient-header text-primary-foreground py-6 px-4 md:px-8 shadow-medium">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
+          <div className="flex-1">
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/fluency-sets")}
+              className="mb-4 text-primary-foreground hover:bg-white/10"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Sets
+            </Button>
+            
+            <div className="flex items-center justify-center gap-3 mb-3">
+              <BookOpen className="w-8 h-8 md:w-10 md:h-10" />
+              <h1 className="text-2xl md:text-4xl font-bold">
+                {isCumulative ? `Sets 1-${setNumber}` : `Set ${setNumber}`}
+              </h1>
+            </div>
+            <p className="text-center text-base md:text-lg opacity-90">
+              Word Reading
+            </p>
+          </div>
           <Button
             variant="ghost"
-            onClick={() => navigate("/fluency-sets")}
-            className="mb-4 text-primary-foreground hover:bg-white/10"
+            size="icon"
+            onClick={() => navigate("/")}
+            className="text-primary-foreground hover:bg-white/10"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Sets
+            <Home className="w-6 h-6" />
           </Button>
-          
-          <div className="flex items-center justify-center gap-3 mb-3">
-            <BookOpen className="w-8 h-8 md:w-10 md:h-10" />
-            <h1 className="text-2xl md:text-4xl font-bold">
-              {isCumulative ? `Sets 1-${setNumber}` : `Set ${setNumber}`}
-            </h1>
-          </div>
-          <p className="text-center text-base md:text-lg opacity-90">
-            Word Reading
-          </p>
         </div>
       </header>
 
