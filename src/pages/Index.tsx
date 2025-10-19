@@ -1,4 +1,4 @@
-import { BookOpen, Sparkles, Zap } from "lucide-react";
+import { BookOpen, Waves, Zap } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import heroBanner from "@/assets/hero-banner.jpg";
@@ -20,7 +20,7 @@ const Index = () => {
       id: 2,
       title: "Decodable Words",
       description: "Blend learned sounds to read words",
-      icon: Zap,
+      icon: Waves,
       gradient: "bg-gradient-tile-2",
       delay: "100ms",
       path: "/fluency-sets",
@@ -29,7 +29,7 @@ const Index = () => {
       id: 3,
       title: "High Frequency Words",
       description: "Practise irregular words",
-      icon: Sparkles,
+      icon: Zap,
       gradient: "bg-gradient-tile-3",
       delay: "200ms",
       path: "/hfw-sets",
