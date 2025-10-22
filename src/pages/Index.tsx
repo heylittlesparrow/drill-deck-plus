@@ -19,7 +19,7 @@ const Index = () => {
     {
       id: 2,
       title: "Decodable Words",
-      description: "Blend learned sounds to read words",
+      description: "Blend sounds to read words",
       icon: Waves,
       gradient: "bg-gradient-tile-2",
       delay: "100ms",
