@@ -15,6 +15,16 @@ const FluencyPractice = () => {
   const [loading, setLoading] = useState(true);
   const isCumulative = searchParams.get('cumulative') === 'true';
 
+  // Shuffle function to randomize array
+  const shuffleArray = <T,>(array: T[]): T[] => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
   useEffect(() => {
     const loadWords = async () => {
       try {
@@ -31,7 +41,8 @@ const FluencyPractice = () => {
           return;
         }
 
-        setWords(relevantWords);
+        // Shuffle the words for random display
+        setWords(shuffleArray(relevantWords));
       } catch (error) {
         console.error('Error loading practice words:', error);
         toast.error('Failed to load practice words');
