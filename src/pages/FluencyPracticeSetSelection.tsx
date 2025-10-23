@@ -82,24 +82,22 @@ const FluencyPracticeSetSelection = () => {
 
       <main className="max-w-4xl mx-auto px-4 md:px-8 py-8">
         {/* Sets Grid */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4 md:gap-6">
           {sets.map((set) => (
             <Card
               key={set.set_number}
-              className="cursor-pointer hover:shadow-medium transition-shadow duration-200 border-2 hover:border-primary"
               onClick={() => handleSetSelect(set.set_number)}
+              className="group cursor-pointer border-0 shadow-soft hover:shadow-medium transition-all duration-300 animate-scale-in overflow-hidden"
+              style={{ animationDelay: `${(set.set_number - 1) * 50}ms` }}
             >
-              <CardContent className="p-6 text-center">
-                <div className="text-3xl font-bold text-primary mb-2">
-                  {set.set_number}
-                </div>
-                <div className="text-sm text-muted-foreground mb-1">
-                  {set.set_id}
-                </div>
-                <div className="text-xs text-muted-foreground">
+              <div className="bg-gradient-tile-3 p-8 md:p-12 text-center h-full min-h-[140px] md:min-h-[180px] flex flex-col items-center justify-center transform transition-transform duration-300 group-hover:scale-[1.02]">
+                <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
+                  Set {set.set_number}
+                </h2>
+                <p className="text-sm md:text-base text-white/80">
                   {set.passage_count} word{set.passage_count !== 1 ? 's' : ''}
-                </div>
-              </CardContent>
+                </p>
+              </div>
             </Card>
           ))}
         </div>
