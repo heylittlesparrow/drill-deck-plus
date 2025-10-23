@@ -40,15 +40,15 @@ All colors MUST be HSL.
     --radius: 1.5rem;  /* Large rounded corners for child-friendly design */
     
     /* Custom activity tile colors */
-    --tile-gpcs: 240 35% 58%;  /* Muted lavender */
-    --tile-hfw: 165 30% 48%;  /* Soft sage green */
-    --tile-fluency: 30 40% 55%;  /* Warm terracotta */
+    --tile-gpcs: 181 24% 40%;  /* Green for GPC */
+    --tile-hfw: 206 19% 42%;  /* Blue for HFW */
+    --tile-fluency: 256 15% 43%;  /* Purple for Decodable Words */
     
     /* Gradients */
     --gradient-header: linear-gradient(135deg, hsl(200 18% 46%), hsl(210 12% 55%));
-    --gradient-tile-1: linear-gradient(135deg, hsl(240 35% 58%), hsl(240 35% 48%));
-    --gradient-tile-2: linear-gradient(135deg, hsl(165 30% 48%), hsl(165 30% 38%));
-    --gradient-tile-3: linear-gradient(135deg, hsl(30 40% 55%), hsl(30 40% 45%));
+    --gradient-tile-1: linear-gradient(135deg, hsl(181 24% 40%), hsl(161 29% 74%));  /* GPC: green main to accent */
+    --gradient-tile-2: linear-gradient(135deg, hsl(206 19% 42%), hsl(206 33% 83%));  /* HFW: blue main to accent */
+    --gradient-tile-3: linear-gradient(135deg, hsl(256 15% 43%), hsl(272 33% 83%));  /* Decodable: purple main to accent */
     
     /* Shadows for depth */
     --shadow-soft: 0 4px 16px rgba(77, 91, 110, 0.08);
