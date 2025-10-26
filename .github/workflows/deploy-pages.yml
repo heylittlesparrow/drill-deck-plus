@@ -28,6 +28,9 @@ jobs:
           mkdir -p dist
           touch dist/.nojekyll
 
+      - name: Create 404.html for SPA routing
+        run: cp dist/index.html dist/404.html
+
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
         with:
