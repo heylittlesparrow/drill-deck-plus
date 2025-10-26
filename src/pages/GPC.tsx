@@ -6,6 +6,11 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchPhonicsData, getCumulativeSets, getSetByNumber } from "@/services/phonicsDataService";
 
+interface GpcWithAudio {
+  gpc: string;
+  phonemeUrl: string;
+}
+
 // Fisher-Yates shuffle algorithm
 const shuffleArray = <T,>(array: T[]): T[] => {
   const shuffled = [...array];
@@ -22,7 +27,7 @@ const GPC = () => {
   const [searchParams] = useSearchParams();
   const practiceMode = searchParams.get("mode") || "cumulative";
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [shuffledGpcs, setShuffledGpcs] = useState<string[]>([]);
+  const [shuffledGpcs, setShuffledGpcs] = useState<GpcWithAudio[]>([]);
   const [audioCache, setAudioCache] = useState<Map<string, HTMLAudioElement>>(new Map());
 
   const { data: setsData, isLoading } = useQuery({
@@ -43,16 +48,21 @@ const GPC = () => {
     enabled: !!setNumber,
   });
 
-  // Combine GPCs from all loaded sets
-  const gpcs = setsData?.flatMap(set => set.gpc_list) || [];
+  // Combine GPCs with their audio URLs from all loaded sets
+  const gpcsWithAudio: GpcWithAudio[] = setsData?.flatMap(set => 
+    set.gpc_list.map((gpc, index) => ({
+      gpc,
+      phonemeUrl: set.phoneme_audio_urls[index] || ''
+    }))
+  ) || [];
   const currentSetName = setsData?.find(s => s.set_number === parseInt(setNumber || "1"))?.set_id || "";
 
   useEffect(() => {
-    if (gpcs.length > 0) {
-      setShuffledGpcs(shuffleArray(gpcs));
+    if (gpcsWithAudio.length > 0) {
+      setShuffledGpcs(shuffleArray(gpcsWithAudio));
       setCurrentIndex(0);
     }
-  }, [setNumber, practiceMode, gpcs.length]);
+  }, [setNumber, practiceMode, gpcsWithAudio.length]);
 
   // Preload all audio files for the current set
   useEffect(() => {
@@ -60,19 +70,17 @@ const GPC = () => {
 
     const cache = new Map<string, HTMLAudioElement>();
     
-    shuffledGpcs.forEach((gpc) => {
+    shuffledGpcs.forEach(({ gpc, phonemeUrl }) => {
+      // Preload phoneme audio from URL
+      if (phonemeUrl) {
+        const phonemeAudio = new Audio(phonemeUrl);
+        phonemeAudio.preload = 'auto';
+        cache.set(`phoneme-${gpc}`, phonemeAudio);
+      }
+      
+      // Preload grapheme audio (still using local files for now)
       let normalizedGpc = gpc.toLowerCase();
       if (normalizedGpc === 'th*') normalizedGpc = 'th-';
-      
-      // Preload phoneme audio
-      const phonemeMp3 = new Audio(`/phoneme-audio/${normalizedGpc}.mp3`);
-      const phonemeM4a = new Audio(`/phoneme-audio/${normalizedGpc}.m4a`);
-      phonemeMp3.preload = 'auto';
-      phonemeM4a.preload = 'auto';
-      cache.set(`phoneme-${normalizedGpc}`, phonemeMp3);
-      cache.set(`phoneme-${normalizedGpc}-m4a`, phonemeM4a);
-      
-      // Preload grapheme audio
       const graphemeMp3 = new Audio(`/grapheme-audio/${normalizedGpc}.mp3`);
       const graphemeM4a = new Audio(`/grapheme-audio/${normalizedGpc}.m4a`);
       graphemeMp3.preload = 'auto';
@@ -95,28 +103,22 @@ const GPC = () => {
   const handlePhoneme = () => {
     if (shuffledGpcs.length === 0) return;
     
-    let currentGpc = shuffledGpcs[currentIndex].toLowerCase();
-    if (currentGpc === 'th*') currentGpc = 'th-';
+    const currentGpc = shuffledGpcs[currentIndex].gpc;
     
     // Use preloaded audio from cache
     const audio = audioCache.get(`phoneme-${currentGpc}`);
     if (audio) {
       audio.currentTime = 0; // Reset to start
-      audio.play().catch(() => {
-        // If mp3 fails, try m4a format
-        const audioM4a = audioCache.get(`phoneme-${currentGpc}-m4a`);
-        if (audioM4a) {
-          audioM4a.currentTime = 0;
-          audioM4a.play().catch(err => console.error("Error playing phoneme audio:", err));
-        }
-      });
+      audio.play().catch(err => console.error("Error playing phoneme audio:", err));
+    } else {
+      console.error("No phoneme audio found for:", currentGpc);
     }
   };
 
   const handleGrapheme = () => {
     if (shuffledGpcs.length === 0) return;
     
-    let currentGpc = shuffledGpcs[currentIndex].toLowerCase();
+    let currentGpc = shuffledGpcs[currentIndex].gpc.toLowerCase();
     if (currentGpc === 'th*') currentGpc = 'th-';
     
     // Use preloaded audio from cache
@@ -201,7 +203,7 @@ const GPC = () => {
             {/* Grapheme Display */}
             <div className="bg-white/95 rounded-3xl p-12 md:p-20 mb-8 text-center shadow-soft">
               <p className="text-9xl md:text-[12rem] font-bold text-foreground tracking-wider">
-                {shuffledGpcs[currentIndex]}
+                {shuffledGpcs[currentIndex]?.gpc}
               </p>
             </div>
 
