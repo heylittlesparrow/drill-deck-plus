@@ -21,7 +21,6 @@ jobs:
         run: npm ci
 
       - name: Build (Vite) with correct base for Pages
-        # ensure the production build uses the repo subpath so asset URLs are correct
         run: npm run build -- --base /drill-deck-plus/
 
       - name: Ensure nojekyll (prevent Jekyll from interfering)
