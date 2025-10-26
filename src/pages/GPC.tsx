@@ -24,7 +24,6 @@ const GPC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [shuffledGpcs, setShuffledGpcs] = useState<string[]>([]);
   const [audioCache, setAudioCache] = useState<Map<string, HTMLAudioElement>>(new Map());
-  const [gpcToPhonemeUrl, setGpcToPhonemeUrl] = useState<Map<string, string>>(new Map());
 
   const { data: setsData, isLoading } = useQuery({
     queryKey: ["phonics-sets-for-practice", setNumber, practiceMode],
@@ -44,25 +43,9 @@ const GPC = () => {
     enabled: !!setNumber,
   });
 
-  // Combine GPCs from all loaded sets and create mapping to phoneme URLs
+  // Combine GPCs from all loaded sets
   const gpcs = setsData?.flatMap(set => set.gpc_list) || [];
   const currentSetName = setsData?.find(s => s.set_number === parseInt(setNumber || "1"))?.set_id || "";
-
-  // Create mapping between GPCs and their phoneme audio URLs from the Google Sheet
-  useEffect(() => {
-    if (!setsData || setsData.length === 0) return;
-    
-    const mapping = new Map<string, string>();
-    setsData.forEach(set => {
-      set.gpc_list.forEach((gpc, index) => {
-        if (set.phoneme_audio_urls && set.phoneme_audio_urls[index]) {
-          mapping.set(gpc, set.phoneme_audio_urls[index]);
-        }
-      });
-    });
-    
-    setGpcToPhonemeUrl(mapping);
-  }, [setsData]);
 
   useEffect(() => {
     if (gpcs.length > 0) {
@@ -73,7 +56,7 @@ const GPC = () => {
 
   // Preload all audio files for the current set
   useEffect(() => {
-    if (shuffledGpcs.length === 0 || gpcToPhonemeUrl.size === 0) return;
+    if (shuffledGpcs.length === 0) return;
 
     const cache = new Map<string, HTMLAudioElement>();
     
@@ -81,15 +64,15 @@ const GPC = () => {
       let normalizedGpc = gpc.toLowerCase();
       if (normalizedGpc === 'th*') normalizedGpc = 'th-';
       
-      // Preload phoneme audio from external CDN URL
-      const phonemeUrl = gpcToPhonemeUrl.get(gpc);
-      if (phonemeUrl) {
-        const phonemeAudio = new Audio(phonemeUrl);
-        phonemeAudio.preload = 'auto';
-        cache.set(`phoneme-${normalizedGpc}`, phonemeAudio);
-      }
+      // Preload phoneme audio
+      const phonemeMp3 = new Audio(`/phoneme-audio/${normalizedGpc}.mp3`);
+      const phonemeM4a = new Audio(`/phoneme-audio/${normalizedGpc}.m4a`);
+      phonemeMp3.preload = 'auto';
+      phonemeM4a.preload = 'auto';
+      cache.set(`phoneme-${normalizedGpc}`, phonemeMp3);
+      cache.set(`phoneme-${normalizedGpc}-m4a`, phonemeM4a);
       
-      // Preload grapheme audio from local files
+      // Preload grapheme audio
       const graphemeMp3 = new Audio(`/grapheme-audio/${normalizedGpc}.mp3`);
       const graphemeM4a = new Audio(`/grapheme-audio/${normalizedGpc}.m4a`);
       graphemeMp3.preload = 'auto';
@@ -99,7 +82,7 @@ const GPC = () => {
     });
     
     setAudioCache(cache);
-  }, [shuffledGpcs, gpcToPhonemeUrl]);
+  }, [shuffledGpcs]);
 
   const handlePrevious = () => {
     setCurrentIndex((prev) => (prev > 0 ? prev - 1 : shuffledGpcs.length - 1));
@@ -115,11 +98,18 @@ const GPC = () => {
     let currentGpc = shuffledGpcs[currentIndex].toLowerCase();
     if (currentGpc === 'th*') currentGpc = 'th-';
     
-    // Use preloaded audio from cache (using external CDN URL)
+    // Use preloaded audio from cache
     const audio = audioCache.get(`phoneme-${currentGpc}`);
     if (audio) {
       audio.currentTime = 0; // Reset to start
-      audio.play().catch(err => console.error("Error playing phoneme audio:", err));
+      audio.play().catch(() => {
+        // If mp3 fails, try m4a format
+        const audioM4a = audioCache.get(`phoneme-${currentGpc}-m4a`);
+        if (audioM4a) {
+          audioM4a.currentTime = 0;
+          audioM4a.play().catch(err => console.error("Error playing phoneme audio:", err));
+        }
+      });
     }
   };
 
