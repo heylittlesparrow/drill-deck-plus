@@ -9,6 +9,7 @@ import { fetchPhonicsData, getCumulativeSets, getSetByNumber } from "@/services/
 interface GpcWithAudio {
   gpc: string;
   phonemeUrl: string;
+  graphemeUrl: string;
 }
 
 // Fisher-Yates shuffle algorithm
@@ -52,7 +53,8 @@ const GPC = () => {
   const gpcsWithAudio: GpcWithAudio[] = setsData?.flatMap(set => 
     set.gpc_list.map((gpc, index) => ({
       gpc,
-      phonemeUrl: set.phoneme_audio_urls[index] || ''
+      phonemeUrl: set.phoneme_audio_urls[index] || '',
+      graphemeUrl: set.grapheme_audio_urls[index] || ''
     }))
   ) || [];
   const currentSetName = setsData?.find(s => s.set_number === parseInt(setNumber || "1"))?.set_id || "";
@@ -70,7 +72,7 @@ const GPC = () => {
 
     const cache = new Map<string, HTMLAudioElement>();
     
-    shuffledGpcs.forEach(({ gpc, phonemeUrl }) => {
+    shuffledGpcs.forEach(({ gpc, phonemeUrl, graphemeUrl }) => {
       // Preload phoneme audio from URL
       if (phonemeUrl) {
         const phonemeAudio = new Audio(phonemeUrl);
@@ -78,15 +80,12 @@ const GPC = () => {
         cache.set(`phoneme-${gpc}`, phonemeAudio);
       }
       
-      // Preload grapheme audio (still using local files for now)
-      let normalizedGpc = gpc.toLowerCase();
-      if (normalizedGpc === 'th*') normalizedGpc = 'th-';
-      const graphemeMp3 = new Audio(`/grapheme-audio/${normalizedGpc}.mp3`);
-      const graphemeM4a = new Audio(`/grapheme-audio/${normalizedGpc}.m4a`);
-      graphemeMp3.preload = 'auto';
-      graphemeM4a.preload = 'auto';
-      cache.set(`grapheme-${normalizedGpc}`, graphemeMp3);
-      cache.set(`grapheme-${normalizedGpc}-m4a`, graphemeM4a);
+      // Preload grapheme audio from URL
+      if (graphemeUrl) {
+        const graphemeAudio = new Audio(graphemeUrl);
+        graphemeAudio.preload = 'auto';
+        cache.set(`grapheme-${gpc}`, graphemeAudio);
+      }
     });
     
     setAudioCache(cache);
@@ -118,21 +117,15 @@ const GPC = () => {
   const handleGrapheme = () => {
     if (shuffledGpcs.length === 0) return;
     
-    let currentGpc = shuffledGpcs[currentIndex].gpc.toLowerCase();
-    if (currentGpc === 'th*') currentGpc = 'th-';
+    const currentGpc = shuffledGpcs[currentIndex].gpc;
     
     // Use preloaded audio from cache
     const audio = audioCache.get(`grapheme-${currentGpc}`);
     if (audio) {
       audio.currentTime = 0; // Reset to start
-      audio.play().catch(() => {
-        // If mp3 fails, try m4a format
-        const audioM4a = audioCache.get(`grapheme-${currentGpc}-m4a`);
-        if (audioM4a) {
-          audioM4a.currentTime = 0;
-          audioM4a.play().catch(err => console.error("Error playing grapheme audio:", err));
-        }
-      });
+      audio.play().catch(err => console.error("Error playing grapheme audio:", err));
+    } else {
+      console.error("No grapheme audio found for:", currentGpc);
     }
   };
 
