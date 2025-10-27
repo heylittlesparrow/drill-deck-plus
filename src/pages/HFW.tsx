@@ -36,17 +36,22 @@ const HFW = () => {
       : getCumulativeSets(phonicsData.phonicsSets, setNum)
     : [];
 
-  // Collect all HFWs from the selected set(s)
-  const hfws = setsData.flatMap(set => set?.hfw_list || []);
+  // Collect all HFWs and their audio URLs from the selected set(s)
+  const hfwsWithAudio = setsData.flatMap(set => 
+    (set?.hfw_list || []).map((word, idx) => ({
+      word,
+      audioUrl: set?.hfw_audio_urls?.[idx] || ''
+    }))
+  );
   const currentSetName = setsData.length > 0 ? setsData[setsData.length - 1]?.set_id : '';
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [shuffledHfws, setShuffledHfws] = useState<string[]>([]);
+  const [shuffledHfws, setShuffledHfws] = useState<Array<{word: string; audioUrl: string}>>([]);
 
   // Shuffle HFWs when data changes
   useEffect(() => {
-    if (hfws.length > 0) {
-      setShuffledHfws(shuffleArray(hfws));
+    if (hfwsWithAudio.length > 0) {
+      setShuffledHfws(shuffleArray(hfwsWithAudio));
       setCurrentIndex(0);
     }
   }, [practiceMode, setNumber, phonicsData]);
@@ -60,12 +65,10 @@ const HFW = () => {
   };
 
   const handleSpeak = () => {
-    const currentWord = shuffledHfws[currentIndex];
-    if (currentWord && 'speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(currentWord);
-      utterance.rate = 0.8;
-      utterance.pitch = 1;
-      window.speechSynthesis.speak(utterance);
+    const currentItem = shuffledHfws[currentIndex];
+    if (currentItem?.audioUrl) {
+      const audio = new Audio(currentItem.audioUrl);
+      audio.play();
     }
   };
 
@@ -85,7 +88,7 @@ const HFW = () => {
     );
   }
 
-  const currentWord = shuffledHfws[currentIndex];
+  const currentWord = shuffledHfws[currentIndex]?.word || '';
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -136,7 +139,7 @@ const HFW = () => {
               size="lg"
               className="bg-white/20 hover:bg-white/30 text-white text-lg md:text-xl px-8 py-6 rounded-xl shadow-soft"
             >
-              🔊 Say the Word
+              🔊 Hear the Word
             </Button>
           </Card>
 

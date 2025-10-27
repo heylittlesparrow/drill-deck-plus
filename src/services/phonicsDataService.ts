@@ -7,6 +7,7 @@ export interface PhonicsSet {
   hfw_list: string[];
   phoneme_audio_urls: string[];
   grapheme_audio_urls: string[];
+  hfw_audio_urls: string[];
 }
 
 export interface PracticeWords {
