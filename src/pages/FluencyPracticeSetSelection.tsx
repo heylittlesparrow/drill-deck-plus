@@ -61,10 +61,7 @@ const FluencyPracticeSetSelection = () => {
               Back to Home
             </Button>
             
-            <div className="flex items-center justify-center gap-3">
-              <BookOpen className="w-8 h-8 md:w-10 md:h-10" />
-              <h1 className="text-2xl md:text-4xl font-bold">Choose your Decodable Words Set</h1>
-            </div>
+            <h1 className="text-2xl md:text-4xl font-bold text-center">Choose your Decodable Words Set</h1>
           </div>
           <Button
             variant="ghost"
