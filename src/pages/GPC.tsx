@@ -165,7 +165,7 @@ const GPC = () => {
       {/* Header */}
       <header className="bg-gradient-header text-primary-foreground py-6 px-4 shadow-medium">
         <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-1">
             <Button
               variant="ghost"
               size="icon"
@@ -174,9 +174,14 @@ const GPC = () => {
             >
               <ArrowLeft className="w-6 h-6" />
             </Button>
-            <h1 className="text-2xl md:text-4xl font-bold">
-              {currentSetName} - Grapheme-Phoneme Correspondences
-            </h1>
+            <div>
+              <h1 className="text-2xl md:text-4xl font-bold">
+                Grapheme-Phoneme Correspondences
+              </h1>
+              <p className="text-sm md:text-base opacity-90 mt-1">
+                Set {setNumber} • {practiceMode === "cumulative" ? "Cumulative" : "Single Set"}
+              </p>
+            </div>
           </div>
           <Button
             variant="ghost"
