@@ -78,7 +78,7 @@ const FluencyPractice = () => {
   const currentWord = words[currentIndex];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-tile-3">
       <header className="bg-gradient-header text-primary-foreground py-6 px-4 md:px-8 shadow-medium">
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
           <div className="flex-1 flex items-center gap-4">
@@ -111,15 +111,15 @@ const FluencyPractice = () => {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 md:px-8 py-8">
-        {/* Word Display */}
-        <Card className="mb-6 shadow-soft">
-          <CardContent className="p-8 md:p-12">
-            <div className="mb-4 text-sm text-muted-foreground text-center">
-              Word {currentIndex + 1} of {words.length}
-            </div>
-            
-            <div className="text-4xl md:text-6xl font-bold text-center min-h-[200px] flex items-center justify-center">
+      <main className="max-w-6xl mx-auto px-4 md:px-8 py-8">
+        <div className="mb-4 text-sm text-white/90 text-center">
+          Word {currentIndex + 1} of {words.length}
+        </div>
+
+        {/* Word Display Card */}
+        <Card className="mb-8 shadow-soft">
+          <CardContent className="p-12 md:p-20">
+            <div className="text-6xl md:text-8xl font-bold text-center text-foreground flex items-center justify-center min-h-[200px]">
               {currentWord ? (
                 <p>{currentWord}</p>
               ) : (
@@ -130,19 +130,19 @@ const FluencyPractice = () => {
         </Card>
 
         {/* Navigation Controls */}
-        <div className="flex justify-between items-center gap-4">
+        <div className="flex justify-between items-center gap-4 max-w-4xl mx-auto">
           <Button
             onClick={handlePrevious}
             disabled={currentIndex === 0}
             size="lg"
             variant="outline"
-            className="flex-1 max-w-[200px]"
+            className="flex-1 max-w-[200px] bg-white/90 hover:bg-white border-white/20"
           >
             <ChevronLeft className="w-5 h-5 mr-2" />
             Previous
           </Button>
 
-          <div className="text-sm text-muted-foreground">
+          <div className="text-sm text-white/90 font-medium">
             {currentIndex + 1} / {words.length}
           </div>
 
@@ -151,7 +151,7 @@ const FluencyPractice = () => {
             disabled={currentIndex === words.length - 1}
             size="lg"
             variant="outline"
-            className="flex-1 max-w-[200px]"
+            className="flex-1 max-w-[200px] bg-white/90 hover:bg-white border-white/20"
           >
             Next
             <ChevronRight className="w-5 h-5 ml-2" />
