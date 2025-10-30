@@ -6,33 +6,24 @@ import heroBanner from "@/assets/hero-banner.jpg";
 const Index = () => {
   const navigate = useNavigate();
   
-  const activities = [
+  const navigationOptions = [
     {
       id: 1,
-      title: "GPCs",
-      description: "Grapheme-Phoneme Correspondences",
+      title: "Browse by Activity",
+      description: "Choose GPCs, Decodables, or High Frequency Words",
       icon: BookOpen,
       gradient: "bg-gradient-tile-1",
       delay: "0ms",
-      path: "/gpc-sets",
+      path: "/browse-by-activity",
     },
     {
       id: 2,
-      title: "Decodable Words",
-      description: "Blend sounds to read words",
+      title: "Browse by Set",
+      description: "Practice multiple activities from the same set",
       icon: Waves,
       gradient: "bg-gradient-tile-3",
       delay: "100ms",
-      path: "/fluency-sets",
-    },
-    {
-      id: 3,
-      title: "High Frequency Words",
-      description: "Practise irregular words",
-      icon: Zap,
-      gradient: "bg-gradient-tile-2",
-      delay: "200ms",
-      path: "/hfw-sets",
+      path: "/browse-by-set",
     },
   ];
 
@@ -71,35 +62,35 @@ const Index = () => {
       <main className="max-w-6xl mx-auto px-4 md:px-8 py-8 md:py-12">
         <div className="mb-8 text-center">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-            Choose Your Activity
+            Choose How to Browse
           </h2>
           <p className="text-muted-foreground text-base md:text-lg">
-            Select a tile below to begin!
+            Select your preferred navigation style
           </p>
         </div>
 
-        {/* Activity Tiles Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-          {activities.map((activity) => (
+        {/* Navigation Options Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
+          {navigationOptions.map((option) => (
             <Card
-              key={activity.id}
+              key={option.id}
               className="group relative overflow-hidden border-0 shadow-soft hover:shadow-medium transition-all duration-300 cursor-pointer animate-scale-in"
-              style={{ animationDelay: activity.delay }}
-              onClick={() => activity.path && navigate(activity.path)}
+              style={{ animationDelay: option.delay }}
+              onClick={() => option.path && navigate(option.path)}
             >
               <div
-                className={`${activity.gradient} p-8 md:p-10 rounded-[var(--radius)] h-full min-h-[280px] md:min-h-[320px] flex flex-col items-center justify-center text-center text-white transform transition-transform duration-300 group-hover:scale-[1.02]`}
+                className={`${option.gradient} p-8 md:p-10 rounded-[var(--radius)] h-full min-h-[280px] md:min-h-[320px] flex flex-col items-center justify-center text-center text-white transform transition-transform duration-300 group-hover:scale-[1.02]`}
               >
                 <div className="mb-6 p-4 bg-white/20 rounded-full group-hover:animate-bounce-gentle transition-all">
-                  <activity.icon className="w-16 h-16 md:w-20 md:h-20" strokeWidth={2} />
+                  <option.icon className="w-16 h-16 md:w-20 md:h-20" strokeWidth={2} />
                 </div>
                 
                 <h3 className="text-2xl md:text-3xl font-bold mb-3 drop-shadow-lg">
-                  {activity.title}
+                  {option.title}
                 </h3>
                 
                 <p className="text-base md:text-lg opacity-90 drop-shadow">
-                  {activity.description}
+                  {option.description}
                 </p>
 
                 {/* Decorative corner elements */}
