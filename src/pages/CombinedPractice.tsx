@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ const CombinedPractice = () => {
   const navigate = useNavigate();
   const { setNumber } = useParams();
   const [searchParams] = useSearchParams();
-  const modes = searchParams.get("modes")?.split(",") || [];
+  const modes = useMemo(() => searchParams.get("modes")?.split(",") || [], [searchParams]);
 
   const [items, setItems] = useState<PracticeItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
