@@ -10,6 +10,8 @@ interface PracticeItem {
   type: "gpc" | "decodable" | "hfw";
   content: string;
   audioUrl?: string;
+  phonemeAudioUrl?: string;
+  graphemeAudioUrl?: string;
 }
 
 const CombinedPractice = () => {
@@ -51,7 +53,8 @@ const CombinedPractice = () => {
           const gpcItems = set.gpc_list.map((gpc, idx) => ({
             type: "gpc" as const,
             content: gpc,
-            audioUrl: set.grapheme_audio_urls?.[idx],
+            phonemeAudioUrl: set.phoneme_audio_urls?.[idx],
+            graphemeAudioUrl: set.grapheme_audio_urls?.[idx],
           }));
           allItems.push(...shuffleArray(gpcItems));
         }
@@ -190,13 +193,37 @@ const CombinedPractice = () => {
                 {currentItem.content}
               </p>
 
-              {/* Audio Button */}
-              {currentItem.audioUrl && (
+              {/* Audio Buttons */}
+              {currentItem.type === "gpc" && (
+                <div className="flex gap-4 mt-6">
+                  {currentItem.phonemeAudioUrl && (
+                    <Button
+                      variant="secondary"
+                      size="lg"
+                      onClick={() => playAudio(currentItem.phonemeAudioUrl!)}
+                    >
+                      <Volume2 className="w-6 h-6 mr-2" />
+                      Phoneme
+                    </Button>
+                  )}
+                  {currentItem.graphemeAudioUrl && (
+                    <Button
+                      variant="secondary"
+                      size="lg"
+                      onClick={() => playAudio(currentItem.graphemeAudioUrl!)}
+                    >
+                      <Volume2 className="w-6 h-6 mr-2" />
+                      Grapheme
+                    </Button>
+                  )}
+                </div>
+              )}
+              {currentItem.type === "hfw" && currentItem.audioUrl && (
                 <Button
                   variant="secondary"
                   size="lg"
                   onClick={() => playAudio(currentItem.audioUrl!)}
-                  className="mt-4"
+                  className="mt-6"
                 >
                   <Volume2 className="w-6 h-6 mr-2" />
                   Play Sound
