@@ -59,13 +59,13 @@ const CombinedPractice = () => {
           allItems.push(...shuffleArray(gpcItems));
         }
 
-        // Add Decodables if selected
+        // Add Decodables if selected (max 15 cards)
         if (modes.includes("decodables") && wordSet?.words) {
           const decodableItems = wordSet.words.map(word => ({
             type: "decodable" as const,
             content: word,
           }));
-          allItems.push(...shuffleArray(decodableItems));
+          allItems.push(...shuffleArray(decodableItems).slice(0, 15));
         }
 
         // Add HFWs if selected
