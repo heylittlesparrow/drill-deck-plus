@@ -1,31 +1,36 @@
-import { BookOpen, Waves, Zap } from "lucide-react";
+import { useEffect, useState } from "react";
+import { BookOpen, Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import heroBanner from "@/assets/hero-banner.jpg";
+import { fetchPhonicsData, PhonicsSet } from "@/services/phonicsDataService";
+import { toast } from "sonner";
 
 const Index = () => {
   const navigate = useNavigate();
-  
-  const navigationOptions = [
-    {
-      id: 1,
-      title: "Browse by Activity",
-      description: "Choose GPCs, Decodables, or High Frequency Words",
-      icon: BookOpen,
-      gradient: "bg-gradient-tile-1",
-      delay: "0ms",
-      path: "/browse-by-activity",
-    },
-    {
-      id: 2,
-      title: "Browse by Set",
-      description: "Practice multiple activities from the same set",
-      icon: Waves,
-      gradient: "bg-gradient-tile-3",
-      delay: "100ms",
-      path: "/browse-by-set",
-    },
-  ];
+  const [sets, setSets] = useState<PhonicsSet[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadSets = async () => {
+      try {
+        const data = await fetchPhonicsData();
+        const availableSets = data.phonicsSets.filter(set => set.set_number <= 12);
+        setSets(availableSets);
+      } catch (error) {
+        console.error("Error loading sets:", error);
+        toast.error("Failed to load sets");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadSets();
+  }, []);
+
+  const handleSetSelect = (setNumber: number) => {
+    navigate(`/practice-mode-selection/${setNumber}`);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -62,44 +67,32 @@ const Index = () => {
       <main className="max-w-6xl mx-auto px-4 md:px-8 py-8 md:py-12">
         <div className="mb-8 text-center">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-            Choose How to Browse
+            Select a Set to Practise
           </h2>
           <p className="text-muted-foreground text-base md:text-lg">
-            Select your preferred navigation style
+            Choose a set to begin your practice session
           </p>
         </div>
 
-        {/* Navigation Options Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
-          {navigationOptions.map((option) => (
-            <Card
-              key={option.id}
-              className="group relative overflow-hidden border-0 shadow-soft hover:shadow-medium transition-all duration-300 cursor-pointer animate-scale-in"
-              style={{ animationDelay: option.delay }}
-              onClick={() => option.path && navigate(option.path)}
-            >
-              <div
-                className={`${option.gradient} p-8 md:p-10 rounded-[var(--radius)] h-full min-h-[280px] md:min-h-[320px] flex flex-col items-center justify-center text-center text-white transform transition-transform duration-300 group-hover:scale-[1.02]`}
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {sets.map((set) => (
+              <Card
+                key={set.set_id}
+                className="group cursor-pointer hover:shadow-medium transition-all duration-300 animate-scale-in"
+                onClick={() => handleSetSelect(set.set_number)}
               >
-                <div className="mb-6 p-4 bg-white/20 rounded-full group-hover:animate-bounce-gentle transition-all">
-                  <option.icon className="w-16 h-16 md:w-20 md:h-20" strokeWidth={2} />
+                <div className="p-6 flex flex-col items-center justify-center min-h-[120px] bg-gradient-tile-1 text-white rounded-[var(--radius)]">
+                  <h3 className="text-3xl font-bold mb-1">Set {set.set_number}</h3>
                 </div>
-                
-                <h3 className="text-2xl md:text-3xl font-bold mb-3 drop-shadow-lg">
-                  {option.title}
-                </h3>
-                
-                <p className="text-base md:text-lg opacity-90 drop-shadow">
-                  {option.description}
-                </p>
-
-                {/* Decorative corner elements */}
-                <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-white/30 rounded-tr-xl" />
-                <div className="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 border-white/30 rounded-bl-xl" />
-              </div>
-            </Card>
-          ))}
-        </div>
+              </Card>
+            ))}
+          </div>
+        )}
       </main>
     </div>
   );
