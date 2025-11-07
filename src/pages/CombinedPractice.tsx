@@ -62,15 +62,20 @@ const CombinedPractice = () => {
             ? shuffledGpcs.slice(0, 10) 
             : shuffledGpcs;
           allItems.push(...limitedGpcs);
+          console.log(`Added ${limitedGpcs.length} GPCs for Set ${set.set_number}`);
         }
 
-        // Add Decodables if selected (max 15 cards)
+        // Add Decodables if selected
         if (modes.includes("decodables") && wordSet?.words) {
-          const decodableItems = wordSet.words.map(word => ({
+          const shuffledDecodables = shuffleArray(wordSet.words);
+          // Limit to 15 decodables for all sets
+          const limitedDecodables = shuffledDecodables.slice(0, 15);
+          const decodableItems = limitedDecodables.map(word => ({
             type: "decodable" as const,
             content: word,
           }));
-          allItems.push(...shuffleArray(decodableItems).slice(0, 15));
+          allItems.push(...decodableItems);
+          console.log(`Added ${decodableItems.length} decodables for Set ${set.set_number} (from ${wordSet.words.length} total)`);
         }
 
         // Add HFWs if selected
