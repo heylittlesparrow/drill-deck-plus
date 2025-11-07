@@ -135,6 +135,13 @@ const SetSummaries = () => {
                   <p className="text-muted-foreground">{summary.skills}</p>
                 </div>
               </div>
+              
+              <Button 
+                onClick={() => navigate(`/practice-mode-selection/${summary.setNumber}`)}
+                className="w-full mt-4"
+              >
+                Start Practice
+              </Button>
             </Card>
           ))}
         </div>
