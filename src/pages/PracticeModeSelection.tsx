@@ -103,8 +103,7 @@ const PracticeModeSelection = () => {
               <div className="p-6 flex items-center gap-4">
                 <Checkbox
                   checked={selectedModes[option.id as keyof typeof selectedModes]}
-                  onCheckedChange={() => toggleMode(option.id as keyof typeof selectedModes)}
-                  className="w-6 h-6"
+                  className="w-6 h-6 pointer-events-none"
                 />
                 <div className="flex-1">
                   <h3 className="text-xl font-bold mb-1">{option.title}</h3>
