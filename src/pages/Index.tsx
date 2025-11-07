@@ -67,10 +67,10 @@ const Index = () => {
       <main className="max-w-6xl mx-auto px-4 md:px-8 py-8 md:py-12">
         <div className="mb-8 text-center">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-            Select a Set to Practise
+            Select a Set to Start
           </h2>
           <p className="text-muted-foreground text-base md:text-lg">
-            Choose a set to begin your practice session
+            Choose a set to begin your revision session
           </p>
         </div>
 
