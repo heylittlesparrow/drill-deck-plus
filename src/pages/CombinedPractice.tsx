@@ -56,7 +56,12 @@ const CombinedPractice = () => {
             phonemeAudioUrl: set.phoneme_audio_urls?.[idx],
             graphemeAudioUrl: set.grapheme_audio_urls?.[idx],
           }));
-          allItems.push(...shuffleArray(gpcItems));
+          // Limit Sets 11 & 12 to 10 random GPCs per session
+          const shuffledGpcs = shuffleArray(gpcItems);
+          const limitedGpcs = (set.set_number === 11 || set.set_number === 12) 
+            ? shuffledGpcs.slice(0, 10) 
+            : shuffledGpcs;
+          allItems.push(...limitedGpcs);
         }
 
         // Add Decodables if selected (max 15 cards)
