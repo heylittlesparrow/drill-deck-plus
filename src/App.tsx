@@ -14,6 +14,7 @@ import HFW from "./pages/HFW";
 import HFWSetSelection from "./pages/HFWSetSelection";
 import FluencyPractice from "./pages/FluencyPractice";
 import FluencyPracticeSetSelection from "./pages/FluencyPracticeSetSelection";
+import SetSummaries from "./pages/SetSummaries";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/hfw/:setNumber" element={<HFW />} />
           <Route path="/fluency-sets" element={<FluencyPracticeSetSelection />} />
           <Route path="/fluency/:setNumber" element={<FluencyPractice />} />
+          <Route path="/set-summaries" element={<SetSummaries />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

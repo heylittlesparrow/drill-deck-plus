@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { BookOpen, Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import heroBanner from "@/assets/hero-banner.jpg";
 import { fetchPhonicsData, PhonicsSet } from "@/services/phonicsDataService";
@@ -67,7 +68,7 @@ const Index = () => {
       <main className="max-w-6xl mx-auto px-4 md:px-8 py-8 md:py-12">
         <div className="mb-8 text-center">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-            Select a Set to Start
+            Quick Start
           </h2>
           <p className="text-muted-foreground text-base md:text-lg">
             Choose a set to begin your revision session
@@ -91,6 +92,17 @@ const Index = () => {
                 </div>
               </Card>
             ))}
+          </div>
+        )}
+
+        {!loading && (
+          <div className="mt-8">
+            <Button 
+              onClick={() => navigate('/set-summaries')}
+              className="w-full h-14 text-lg font-semibold"
+            >
+              Set 1-12 Summaries
+            </Button>
           </div>
         )}
       </main>
