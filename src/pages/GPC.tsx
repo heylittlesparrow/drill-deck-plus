@@ -61,7 +61,13 @@ const GPC = () => {
 
   useEffect(() => {
     if (gpcsWithAudio.length > 0) {
-      setShuffledGpcs(shuffleArray(gpcsWithAudio));
+      const shuffled = shuffleArray(gpcsWithAudio);
+      // Limit Sets 11 & 12 to 10 random GPCs per session
+      const currentSet = parseInt(setNumber || "1");
+      const limited = (currentSet === 11 || currentSet === 12) 
+        ? shuffled.slice(0, 10) 
+        : shuffled;
+      setShuffledGpcs(limited);
       setCurrentIndex(0);
     }
   }, [setNumber, practiceMode, gpcsWithAudio.length]);
