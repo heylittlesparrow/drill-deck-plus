@@ -1,11 +1,18 @@
 import { useEffect, useState } from "react";
-import { BookOpen, Loader2 } from "lucide-react";
+import { BookOpen, Loader2, HelpCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import heroBanner from "@/assets/hero-banner.jpg";
 import { fetchPhonicsData, PhonicsSet } from "@/services/phonicsDataService";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -67,6 +74,45 @@ const Index = () => {
       {/* Main Dashboard */}
       <main className="max-w-6xl mx-auto px-4 md:px-8 py-8 md:py-12">
         <div className="mb-8 text-center">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="mb-6">
+                <HelpCircle className="w-4 h-4 mr-2" />
+                New here?
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle className="text-xl">Welcome to Drill Deck PLUS!</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 text-muted-foreground">
+                <p>
+                  To access flash cards for each Phonics Set, tap your preferred collection below.
+                </p>
+                <p>
+                  The next screen will prompt you to select practice for GPCs, Decodable Words, and High Frequency Words - choose one or all you please.
+                </p>
+                <p>
+                  Unsure where to start? Tap the 'Set 1-12 Summaries' button at the foot of this page to see a run-down of the content for each step!
+                </p>
+                <p>
+                  Drill Deck PLUS is designed to enable grown-ups assisting their early learners with highly targeted phonics practice.
+                </p>
+                <p>
+                  For instructional guidance, head to our creator's instagram account:{" "}
+                  <a 
+                    href="https://instagram.com/SharonShares.thecode" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-primary font-medium hover:underline"
+                  >
+                    @SharonShares.thecode
+                  </a>
+                </p>
+              </div>
+            </DialogContent>
+          </Dialog>
+          
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
             Quick Start
           </h2>
