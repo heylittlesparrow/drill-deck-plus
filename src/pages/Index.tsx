@@ -79,7 +79,7 @@ const Index = () => {
               <Button 
                 variant="outline" 
                 size="sm"
-                className="bg-[#7A9BB8] border-foreground text-foreground hover:bg-[#6A8BA8]"
+                className="bg-[#7A9BB8] border-[#7A9BB8] text-white hover:bg-[#6A8BA8] hover:border-[#6A8BA8]"
               >
                 <HelpCircle className="w-4 h-4 mr-2" />
                 New here?
