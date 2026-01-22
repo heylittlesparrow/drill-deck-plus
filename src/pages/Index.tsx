@@ -73,13 +73,13 @@ const Index = () => {
 
       {/* Main Dashboard */}
       <main className="max-w-6xl mx-auto px-4 md:px-8 py-8 md:py-12">
-        <div className="flex items-start justify-between mb-6">
+        <div className="mb-6">
           <Dialog>
             <DialogTrigger asChild>
               <Button 
                 variant="outline" 
                 size="sm"
-                className="border-[#7A9BB8] text-[#7A9BB8] hover:bg-[#7A9BB8]/10"
+                className="bg-[#7A9BB8] border-foreground text-foreground hover:bg-[#6A8BA8]"
               >
                 <HelpCircle className="w-4 h-4 mr-2" />
                 New here?
@@ -117,7 +117,7 @@ const Index = () => {
             </DialogContent>
           </Dialog>
           
-          <div className="text-right flex-1">
+          <div className="text-center mt-4">
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-1">
               Quick Start
             </h2>
