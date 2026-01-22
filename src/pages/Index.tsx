@@ -73,10 +73,14 @@ const Index = () => {
 
       {/* Main Dashboard */}
       <main className="max-w-6xl mx-auto px-4 md:px-8 py-8 md:py-12">
-        <div className="mb-8 text-center">
+        <div className="flex items-start justify-between mb-6">
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" className="mb-6">
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="border-[#7A9BB8] text-[#7A9BB8] hover:bg-[#7A9BB8]/10"
+              >
                 <HelpCircle className="w-4 h-4 mr-2" />
                 New here?
               </Button>
@@ -113,12 +117,14 @@ const Index = () => {
             </DialogContent>
           </Dialog>
           
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-            Quick Start
-          </h2>
-          <p className="text-muted-foreground text-base md:text-lg">
-            Choose a set to begin your revision session
-          </p>
+          <div className="text-right flex-1">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-1">
+              Quick Start
+            </h2>
+            <p className="text-muted-foreground text-base md:text-lg">
+              Choose a set to begin your revision session
+            </p>
+          </div>
         </div>
 
         {loading ? (
