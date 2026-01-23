@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Nunito', 'Century Gothic', 'CenturyGothic', 'AppleGothic', 'sans-serif'],
+        sans: ['Mulish', 'Century Gothic', 'CenturyGothic', 'AppleGothic', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
