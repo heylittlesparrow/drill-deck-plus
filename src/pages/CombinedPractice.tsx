@@ -199,7 +199,7 @@ const CombinedPractice = () => {
 
             {/* Content */}
             <div className="flex flex-col items-center justify-center min-h-[300px]">
-              <p className="text-6xl md:text-8xl font-bold text-white text-center mb-6">
+              <p className="text-7xl md:text-9xl font-bold text-white text-center mb-6 font-sans">
                 {currentItem.content}
               </p>
 

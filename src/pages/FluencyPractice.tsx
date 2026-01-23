@@ -119,11 +119,11 @@ const FluencyPractice = () => {
         {/* Word Display Card */}
         <Card className="mb-8 shadow-soft">
           <CardContent className="p-12 md:p-20">
-            <div className="text-6xl md:text-8xl font-bold text-center text-foreground flex items-center justify-center min-h-[200px]">
+            <div className="text-7xl md:text-9xl font-bold text-center text-foreground flex items-center justify-center min-h-[300px] font-sans">
               {currentWord ? (
                 <p>{currentWord}</p>
               ) : (
-                <p className="text-muted-foreground">No word available</p>
+                <p className="text-muted-foreground text-4xl">No word available</p>
               )}
             </div>
           </CardContent>

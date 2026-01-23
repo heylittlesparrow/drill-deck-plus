@@ -206,7 +206,7 @@ const GPC = () => {
           <div className="bg-gradient-tile-1 p-8 md:p-16">
             {/* Grapheme Display */}
             <div className="bg-white/95 rounded-3xl p-12 md:p-20 mb-8 text-center shadow-soft">
-              <p className="text-9xl md:text-[12rem] font-bold text-foreground tracking-wider">
+              <p className="text-[10rem] md:text-[16rem] font-bold text-foreground tracking-wider font-sans">
                 {shuffledGpcs[currentIndex]?.gpc}
               </p>
             </div>
