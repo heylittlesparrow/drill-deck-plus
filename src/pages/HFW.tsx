@@ -129,7 +129,7 @@ const HFW = () => {
         <div className="w-full max-w-4xl">
           {/* Word Display Card */}
           <Card className="mb-8 p-12 md:p-20 border-0 shadow-medium text-center bg-gradient-tile-2">
-            <div className="text-6xl md:text-9xl font-bold text-white drop-shadow-lg mb-8">
+            <div className="text-8xl md:text-[12rem] font-bold text-white drop-shadow-lg mb-8 font-sans">
               {currentWord}
             </div>
             
